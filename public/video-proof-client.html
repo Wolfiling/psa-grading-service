@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Vidéo de Preuve - PSA Grading Service</title>
+    
+    <!-- Meta tags pour SEO et sécurité -->
+    <meta name="description" content="Accédez à votre vidéo de preuve PSA de manière sécurisée avec votre numéro de soumission.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="shopify-psa-logo.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/clientVideo.css">
+    
+    <!-- Security headers meta -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self';">
+</head>
+<body class="client-portal">
+    <!-- Navigation sécurisée -->
+    <header class="client-header">
+        <div class="container">
+            <div class="header-content">
+                <img src="shopify-psa-logo.png" alt="PSA Grading Service" class="psa-logo">
+                <div class="header-text">
+                    <h1>Accès Vidéo de Preuve</h1>
+                    <p>Consultez votre vidéo de preuve en toute sécurité</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="client-main">
+        <div class="container">
+            
+            <!-- Section d'authentification -->
+            <section id="auth-section" class="auth-section">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h2>🔐 Accès sécurisé</h2>
+                        <p>Entrez vos informations pour accéder à votre vidéo de preuve PSA</p>
+                    </div>
+
+                    <form id="client-auth-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="submission-id" class="form-label">
+                                <strong>Numéro de soumission PSA</strong>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="submission-id" 
+                                name="submission_id"
+                                class="form-input" 
+                                placeholder="PSA1757960..." 
+                                required
+                                autocomplete="off"
+                                maxlength="50"
+                                pattern="[A-Za-z0-9-]+"
+                            >
+                            <small class="form-hint">Trouvé dans votre email de confirmation</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email-partial" class="form-label">
+                                <strong>4 derniers caractères de votre email</strong>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="email-partial" 
+                                name="email_partial"
+                                class="form-input email-partial" 
+                                placeholder="john"
+                                required
+                                autocomplete="off"
+                                maxlength="4"
+                                minlength="4"
+                                pattern="[a-zA-Z0-9]+"
+                            >
+                            <small class="form-hint">Les 4 caractères avant le @</small>
+                        </div>
+
+                        <!-- Simple captcha pour sécurité -->
+                        <div class="form-group captcha-group">
+                            <label for="simple-captcha" class="form-label">
+                                <strong>Vérification de sécurité</strong>
+                            </label>
+                            <div class="captcha-container">
+                                <span class="captcha-question">En quelle année sommes-nous ?</span>
+                                <input 
+                                    type="text" 
+                                    id="simple-captcha" 
+                                    name="simple_captcha"
+                                    class="form-input captcha-input" 
+                                    placeholder="2024"
+                                    required
+                                    maxlength="4"
+                                    pattern="[0-9]+"
+                                >
+                            </div>
+                            <small class="form-hint">Répondez pour confirmer que vous êtes humain</small>
+                        </div>
+
+                        <button type="submit" class="auth-submit-btn" id="submit-btn">
+                            <span class="btn-text">Accéder à ma vidéo</span>
+                            <span class="btn-loader" style="display: none;">
+                                <div class="spinner"></div>
+                                Vérification...
+                            </span>
+                        </button>
+
+                        <!-- Messages d'erreur/succès -->
+                        <div id="auth-message" class="auth-message" style="display: none;"></div>
+                    </form>
+
+                    <div class="auth-footer">
+                        <div class="security-info">
+                            <p><strong>🔒 Connexion sécurisée</strong></p>
+                            <p>Votre accès est protégé et limité dans le temps pour votre sécurité.</p>
+                        </div>
+                        
+                        <div class="help-links">
+                            <a href="#" id="help-link">❓ Besoin d'aide ?</a>
+                            <a href="#" id="forgot-link">📧 Informations perdues ?</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section vidéo (masquée initialement) -->
+            <section id="video-section" class="video-section" style="display: none;">
+                <div class="video-card">
+                    <div class="video-header">
+                        <div class="submission-info">
+                            <h2 id="card-name">Chargement...</h2>
+                            <div class="submission-details">
+                                <span class="submission-id-display" id="submission-display"></span>
+                                <span class="grading-type" id="grading-type"></span>
+                            </div>
+                        </div>
+                        <div class="video-actions">
+                            <button id="report-issue-btn" class="report-btn">⚠️ Signaler un problème</button>
+                            <button id="logout-btn" class="logout-btn">🚪 Déconnexion</button>
+                        </div>
+                    </div>
+
+                    <div class="video-container">
+                        <video 
+                            id="proof-video" 
+                            class="proof-video" 
+                            controls 
+                            preload="metadata"
+                            controlsList="nodownload"
+                            poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIgZmlsbD0iIzAwM2Q4MiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+8J+OrSBWaWTDqW8gZGUgUHJldXZlIFBTQTwvdGV4dD4KPC9zdmc+"
+                        >
+                            <p>Votre navigateur ne supporte pas la lecture vidéo HTML5.</p>
+                        </video>
+                        
+                        <!-- Loading overlay -->
+                        <div id="video-loading" class="video-loading" style="display: none;">
+                            <div class="video-spinner"></div>
+                            <p>Chargement de votre vidéo...</p>
+                        </div>
+                    </div>
+
+                    <div class="video-info">
+                        <div class="video-metadata">
+                            <div class="metadata-item">
+                                <span class="metadata-label">📅 Date d'enregistrement</span>
+                                <span id="recording-date" class="metadata-value">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">⏱️ Durée</span>
+                                <span id="video-duration" class="metadata-value">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">🔒 Accès expire dans</span>
+                                <span id="access-expires" class="metadata-value countdown">-</span>
+                            </div>
+                        </div>
+
+                        <div class="video-explanation">
+                            <h3>📹 À propos de cette vidéo</h3>
+                            <p>Cette vidéo de preuve a été enregistrée lors de l'ouverture de votre colis, avant l'envoi de vos cartes pour gradation PSA. Elle certifie l'état et l'authenticité de vos cartes au moment de notre réception.</p>
+                            
+                            <div class="proof-benefits">
+                                <div class="benefit-item">
+                                    <strong>✅ Transparence totale</strong>
+                                    <span>Visualisez l'état exact de vos cartes</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <strong>🛡️ Protection légale</strong>
+                                    <span>Preuve en cas de litige ou réclamation</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <strong>📱 Accès permanent</strong>
+                                    <span>Reconnectez-vous quand vous voulez</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section de signalement (masquée initialement) -->
+            <section id="report-section" class="report-section" style="display: none;">
+                <div class="report-card">
+                    <div class="report-header">
+                        <h2>⚠️ Signaler un problème</h2>
+                        <p>Décrivez le problème rencontré avec votre vidéo de preuve</p>
+                    </div>
+
+                    <form id="report-form" class="report-form">
+                        <div class="form-group">
+                            <label for="issue-type" class="form-label">
+                                <strong>Type de problème</strong>
+                            </label>
+                            <select id="issue-type" name="issue_type" class="form-select" required>
+                                <option value="">Sélectionnez...</option>
+                                <option value="video-quality">Qualité vidéo insuffisante</option>
+                                <option value="video-incomplete">Vidéo incomplète ou coupée</option>
+                                <option value="wrong-cards">Mauvaises cartes dans la vidéo</option>
+                                <option value="technical-issue">Problème technique de lecture</option>
+                                <option value="other">Autre problème</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issue-priority" class="form-label">
+                                <strong>Priorité</strong>
+                            </label>
+                            <select id="issue-priority" name="priority" class="form-select" required>
+                                <option value="low">🟢 Basse - Question simple</option>
+                                <option value="medium" selected>🟡 Normale - Problème gênant</option>
+                                <option value="high">🔴 Haute - Problème majeur</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issue-description" class="form-label">
+                                <strong>Description détaillée</strong>
+                            </label>
+                            <textarea 
+                                id="issue-description" 
+                                name="description" 
+                                class="form-textarea" 
+                                rows="5"
+                                placeholder="Décrivez le problème rencontré de manière détaillée..."
+                                required
+                                maxlength="2000"
+                            ></textarea>
+                            <small class="form-hint">
+                                <span id="char-count">0</span>/2000 caractères
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact-email" class="form-label">
+                                <strong>Email de contact</strong>
+                            </label>
+                            <input 
+                                type="email" 
+                                id="contact-email" 
+                                name="client_email"
+                                class="form-input" 
+                                required
+                                autocomplete="email"
+                            >
+                            <small class="form-hint">Pour vous tenir informé du suivi</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" id="cancel-report-btn" class="cancel-btn">
+                                Annuler
+                            </button>
+                            <button type="submit" id="submit-report-btn" class="submit-btn">
+                                <span class="btn-text">Envoyer le signalement</span>
+                                <span class="btn-loader" style="display: none;">
+                                    <div class="spinner"></div>
+                                    Envoi...
+                                </span>
+                            </button>
+                        </div>
+
+                        <div id="report-message" class="report-message" style="display: none;"></div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Section de confirmation de signalement -->
+            <section id="report-success-section" class="report-success-section" style="display: none;">
+                <div class="success-card">
+                    <div class="success-icon">✅</div>
+                    <h2>Signalement enregistré</h2>
+                    <p>Votre signalement a été transmis à notre équipe.</p>
+                    
+                    <div class="ticket-info">
+                        <div class="ticket-number">
+                            <span class="label">Numéro de ticket:</span>
+                            <span id="ticket-number" class="value">-</span>
+                        </div>
+                        <div class="response-time">
+                            <span class="label">Délai de réponse:</span>
+                            <span class="value">24-48h ouvrées</span>
+                        </div>
+                    </div>
+                    
+                    <div class="success-actions">
+                        <button id="back-to-video-btn" class="primary-btn">
+                            Retour à la vidéo
+                        </button>
+                        <button id="new-report-btn" class="secondary-btn">
+                            Nouveau signalement
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer simple -->
+    <footer class="client-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 PSA Grading Service - Accès sécurisé aux vidéos de preuve</p>
+                <div class="footer-links">
+                    <a href="/client-help" target="_blank">Aide & FAQ</a>
+                    <a href="mailto:support@psa-grading.com">Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modale d'aide -->
+    <div id="help-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🆘 Besoin d'aide ?</h3>
+                <button id="close-help-modal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-content">
+                    <h4>🔍 Comment trouver mon numéro PSA ?</h4>
+                    <p>Votre numéro de soumission PSA se trouve dans:</p>
+                    <ul>
+                        <li>📧 L'email de confirmation de votre commande</li>
+                        <li>📄 Le récapitulatif de votre commande Shopify</li>
+                        <li>🎫 Le QR code sur votre facture</li>
+                    </ul>
+                    
+                    <h4>✉️ Les 4 derniers caractères de l'email ?</h4>
+                    <p>Par exemple, si votre email est <strong>john.doe@gmail.com</strong>, 
+                       entrez: <strong>john</strong></p>
+                    
+                    <h4>⚠️ Problèmes fréquents ?</h4>
+                    <ul>
+                        <li>Vérifiez les majuscules/minuscules</li>
+                        <li>Essayez de rafraîchir la page</li>
+                        <li>Contactez-nous si le problème persiste</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="contact-support" class="primary-btn">
+                    📧 Contacter le support
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/clientVideoAccess.js"></script>
+</body>
+</html>

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enregistrement Vidéo PSA - Personnel</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- QR Scanner JS -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .video-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header-section {
+            background: linear-gradient(45deg, #4a90e2, #357abd);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin: 0.5rem;
+        }
+        
+        .status-pending { background-color: #ffc107; color: #000; }
+        .status-recording { background-color: #dc3545; color: white; animation: pulse 1.5s infinite; }
+        .status-uploaded { background-color: #28a745; color: white; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .video-preview {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .video-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .recording-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .recording-overlay.active {
+            display: block;
+            animation: pulse 1s infinite;
+        }
+        
+        .timer-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #dc3545;
+            text-align: center;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 10px;
+        }
+        
+        .control-buttons {
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .btn-record {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            margin: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-record:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-stop {
+            background: linear-gradient(45deg, #6c757d, #5a6268);
+        }
+        
+        .btn-upload {
+            background: linear-gradient(45deg, #28a745, #218838);
+        }
+        
+        .progress-container {
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .card-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .qr-scanner-container {
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .qr-reader {
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        
+        .alert-custom {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .spinner-container {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* QR Code Section */
+        .qr-code-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+        
+        .qr-code-display {
+            display: inline-block;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 1rem 0;
+        }
+        
+        .qr-code-display img {
+            max-width: 200px;
+            height: auto;
+            border-radius: 5px;
+        }
+        
+        .qr-code-instructions {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .video-preview {
+                height: 300px;
+            }
+            
+            .btn-record {
+                font-size: 1rem;
+                padding: 0.7rem 1.5rem;
+            }
+            
+            .timer-display {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="video-container">
+                    <!-- Header -->
+                    <div class="header-section">
+                        <h2><i class="fas fa-video me-2"></i>Enregistrement Vidéo PSA</h2>
+                        <p class="mb-0">Interface Personnel - Preuve Vidéo des Commandes</p>
+                        <div class="status-badge status-pending" id="statusBadge">En attente</div>
+                    </div>
+                    
+                    <!-- Alert Messages -->
+                    <div id="alertContainer"></div>
+                    
+                    <!-- QR Scanner Section -->
+                    <div class="p-4" id="qrScannerSection">
+                        <h4><i class="fas fa-qrcode me-2"></i>Scan QR Code de la Commande</h4>
+                        <div class="qr-scanner-container">
+                            <div id="qr-reader" class="qr-reader" style="width: 300px;"></div>
+                            <div class="mt-3">
+                                <button class="btn btn-primary" id="startScanBtn">
+                                    <i class="fas fa-camera me-2"></i>Démarrer le Scanner
+                                </button>
+                                <button class="btn btn-secondary hidden" id="stopScanBtn">
+                                    <i class="fas fa-stop me-2"></i>Arrêter le Scanner
+                                </button>
+                            </div>
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    Ou entrez manuellement l'ID de soumission:
+                                </small>
+                                <div class="input-group mt-2">
+                                    <input type="text" class="form-control" id="manualSubmissionId" 
+                                           placeholder="PSA1234567890...">
+                                    <button class="btn btn-outline-primary" id="loadManualBtn">Charger</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading Section -->
+                    <div class="spinner-container hidden" id="loadingSection">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p class="mt-2">Chargement des informations de la commande...</p>
+                    </div>
+                    
+                    <!-- Submission Info Section -->
+                    <div class="p-4 hidden" id="submissionInfoSection">
+                        <h4><i class="fas fa-info-circle me-2"></i>Informations de la Commande</h4>
+                        <div class="card-info" id="submissionDetails">
+                            <!-- Chargé dynamiquement -->
+                        </div>
+                        
+                        <!-- QR Code Section -->
+                        <div class="qr-code-section" id="qrCodeSection">
+                            <h5><i class="fas fa-qrcode me-2"></i>QR Code de la Commande</h5>
+                            <p class="text-muted mb-3">Montrez ce QR code devant la caméra pendant l'enregistrement</p>
+                            <div class="qr-code-display" id="qrCodeDisplay">
+                                <div class="spinner-border spinner-border-sm" role="status" id="qrLoader">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <img id="qrCodeImage" src="" alt="QR Code" class="hidden">
+                                <p class="qr-code-instructions">
+                                    Ce QR code identifie votre commande PSA de manière unique
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Video Recording Section -->
+                    <div class="p-4 hidden" id="videoSection">
+                        <h4><i class="fas fa-video me-2"></i>Enregistrement Vidéo</h4>
+                        
+                        <!-- Video Preview -->
+                        <div class="video-preview mb-3">
+                            <video id="videoPreview" autoplay muted playsinline></video>
+                            <div class="recording-overlay" id="recordingOverlay">
+                                <i class="fas fa-circle me-2"></i>ENREGISTREMENT
+                            </div>
+                        </div>
+                        
+                        <!-- Timer -->
+                        <div class="timer-display" id="timerDisplay">00:00 / 02:00</div>
+                        
+                        <!-- Controls -->
+                        <div class="control-buttons">
+                            <button class="btn btn-record" id="startRecordBtn" disabled>
+                                <i class="fas fa-play me-2"></i>Démarrer l'Enregistrement
+                            </button>
+                            <button class="btn btn-record btn-stop hidden" id="stopRecordBtn">
+                                <i class="fas fa-stop me-2"></i>Arrêter l'Enregistrement
+                            </button>
+                            <button class="btn btn-record btn-upload hidden" id="uploadBtn">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>Uploader la Vidéo
+                            </button>
+                        </div>
+                        
+                        <!-- Camera Controls -->
+                        <div class="camera-controls mt-3">
+                            <button class="btn btn-outline-primary" id="flipCameraBtn" disabled>
+                                <i class="fas fa-sync-alt me-2"></i>Tourner la Caméra
+                            </button>
+                            <button class="btn btn-secondary" id="resetBtn">
+                                <i class="fas fa-redo me-2"></i>Recommencer
+                            </button>
+                        </div>
+                        
+                        <!-- Upload Progress -->
+                        <div class="progress-container" id="progressContainer">
+                            <label class="form-label">Progression de l'upload:</label>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     id="uploadProgress" role="progressbar" style="width: 0%">0%</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Info -->
+                        <div class="mt-3" id="videoInfo">
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Durée Max</small>
+                                    <strong>2 minutes</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Taille Max</small>
+                                    <strong>50 MB</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Format</small>
+                                    <strong>WebM/MP4</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Success Section -->
+                    <div class="p-4 text-center hidden" id="successSection">
+                        <div class="alert alert-success alert-custom">
+                            <i class="fas fa-check-circle fa-3x mb-3"></i>
+                            <h4>Vidéo Enregistrée avec Succès!</h4>
+                            <p>La preuve vidéo a été uploadée et associée à la commande PSA.</p>
+                            <button class="btn btn-primary" id="newRecordingBtn">
+                                <i class="fas fa-plus me-2"></i>Nouvelle Commande
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Video Recorder Script -->
+    <script src="/js/videoRecorder.js?v=1732685040" 
+            onerror="console.error('[PSA Video] ❌ Erreur chargement videoRecorder.js')"></script>
+    
+    <script>
+        // VARIABLES GLOBALES POUR LA VIDÉO
+        let videoStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let currentFacingMode = 'user'; // 'user' = avant, 'environment' = arrière
+        let recordingTimer = null;
+        let recordingStartTime = null;
+        
+        // FONCTION D'INITIALISATION CAMÉRA
+        async function initializeCamera(facingMode = 'user') {
+            try {
+                console.log('[PSA Video] 🎥 Initialisation de la caméra...', facingMode);
+                
+                // Libérer le stream existant
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Configuration caméra avec facingMode
+                const constraints = {
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        frameRate: { ideal: 30 },
+                        facingMode: facingMode
+                    },
+                    audio: true
+                };
+                
+                videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+                const videoPreview = document.getElementById('videoPreview');
+                if (videoPreview) {
+                    videoPreview.srcObject = videoStream;
+                    console.log('[PSA Video] ✅ Caméra initialisée:', facingMode === 'user' ? 'avant' : 'arrière');
+                }
+                
+                currentFacingMode = facingMode;
+                
+                // Activer les boutons
+                const startRecordBtn = document.getElementById('startRecordBtn');
+                const flipCameraBtn = document.getElementById('flipCameraBtn');
+                
+                if (startRecordBtn) {
+                    startRecordBtn.disabled = false;
+                    startRecordBtn.onclick = startRecording;
+                }
+                
+                if (flipCameraBtn) {
+                    flipCameraBtn.disabled = false;
+                    flipCameraBtn.onclick = flipCamera;
+                }
+                
+            } catch (error) {
+                console.error('[PSA Video] ❌ Erreur caméra:', error);
+                let errorMsg = 'Erreur: Impossible d\'accéder à la caméra.';
+                
+                if (error.name === 'NotAllowedError') {
+                    errorMsg = 'Permissions caméra refusées. Autorisez l\'accès à la caméra.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMsg = 'Aucune caméra trouvée sur cet appareil.';
+                } else if (error.name === 'NotReadableError') {
+                    errorMsg = 'Caméra déjà utilisée par une autre application.';
+                } else if (error.name === 'OverconstrainedError') {
+                    errorMsg = 'Configuration caméra non supportée. Essayez une autre caméra.';
+                }
+                
+                showAlert(errorMsg, 'error');
+            }
+        }
+        
+        // FONCTION ROTATION CAMÉRA
+        async function flipCamera() {
+            try {
+                const newFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+                console.log('[PSA Video] 🔄 Rotation caméra vers:', newFacingMode);
+                
+                const flipBtn = document.getElementById('flipCameraBtn');
+                if (flipBtn) flipBtn.disabled = true;
+                
+                await initializeCamera(newFacingMode);
+                
+                if (flipBtn) flipBtn.disabled = false;
+                
+            } catch (error) {
+                console.error('[PSA Video] ❌ Erreur rotation caméra:', error);
+                showAlert('Impossible de changer de caméra: ' + error.message, 'error');
+            }
+        }
+        
+        // FONCTION D'ENREGISTREMENT
+        async function startRecording() {
+            try {
+                console.log('[PSA Video] 🎬 Vérification préalable...');
+                
+                // Vérifications de sécurité
+                if (!videoStream) {
+                    console.error('[PSA Video] ❌ Stream vidéo non disponible');
+                    showAlert('Stream vidéo non disponible. Réinitialisez la caméra.', 'error');
+                    return;
+                }
+                
+                if (!MediaRecorder) {
+                    console.error('[PSA Video] ❌ MediaRecorder non supporté');
+                    showAlert('Enregistrement vidéo non supporté par ce navigateur.', 'error');
+                    return;
+                }
+                
+                // Vérifier les pistes actives
+                const videoTracks = videoStream.getVideoTracks();
+                const audioTracks = videoStream.getAudioTracks();
+                
+                if (videoTracks.length === 0) {
+                    showAlert('Aucune piste vidéo disponible. Relancez la caméra.', 'error');
+                    return;
+                }
+                
+                console.log('[PSA Video] ✅ Pistes disponibles:', {
+                    video: videoTracks.length,
+                    audio: audioTracks.length
+                });
+                
+                console.log('[PSA Video] 🎬 Démarrage enregistrement...');
+                recordedChunks = [];
+                recordingStartTime = Date.now();
+                
+                // Configuration MediaRecorder avec fallback
+                let options = { mimeType: 'video/webm;codecs=vp8,opus' };
+                
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options = { mimeType: 'video/webm' };
+                    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                        options = {}; // Utiliser format par défaut
+                    }
+                }
+                
+                console.log('[PSA Video] 📋 Format utilisé:', options.mimeType || 'défaut');
+                
+                mediaRecorder = new MediaRecorder(videoStream, options);
+                
+                // Gestion des événements
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                        console.log('[PSA Video] 📦 Chunk reçu:', event.data.size, 'bytes');
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const duration = Date.now() - recordingStartTime;
+                    console.log('[PSA Video] ✅ Enregistrement terminé, durée:', Math.round(duration/1000) + 's');
+                    
+                    const uploadBtn = document.getElementById('uploadBtn');
+                    if (uploadBtn) {
+                        uploadBtn.classList.remove('hidden');
+                        // ATTACHER LA FONCTION D'UPLOAD
+                        uploadBtn.onclick = uploadVideo;
+                    }
+                    
+                    clearInterval(recordingTimer);
+                    updateTimerDisplay(0);
+                };
+                
+                mediaRecorder.onerror = (event) => {
+                    console.error('[PSA Video] ❌ Erreur MediaRecorder:', event.error);
+                    showAlert('Erreur d\'enregistrement: ' + event.error.message, 'error');
+                };
+                
+                mediaRecorder.onstart = () => {
+                    console.log('[PSA Video] ✅ Enregistrement démarré');
+                };
+                
+                // Démarrer l'enregistrement
+                mediaRecorder.start(1000);
+                
+                // Démarrer le timer
+                recordingTimer = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                    updateTimerDisplay(elapsed);
+                }, 1000);
+                
+                // UI update
+                const startBtn = document.getElementById('startRecordBtn');
+                const stopBtn = document.getElementById('stopRecordBtn');
+                const flipBtn = document.getElementById('flipCameraBtn');
+                
+                if (startBtn) startBtn.classList.add('hidden');
+                if (stopBtn) {
+                    stopBtn.classList.remove('hidden');
+                    stopBtn.onclick = stopRecording;
+                }
+                if (flipBtn) flipBtn.disabled = true; // Désactiver rotation pendant enregistrement
+                
+                // Overlay enregistrement
+                const overlay = document.getElementById('recordingOverlay');
+                if (overlay) overlay.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('[PSA Video] ❌ Erreur enregistrement:', error);
+                
+                let errorMsg = 'Erreur lors du démarrage de l\'enregistrement';
+                if (error.name === 'NotSupportedError') {
+                    errorMsg = 'Format d\'enregistrement non supporté par ce navigateur';
+                } else if (error.name === 'SecurityError') {
+                    errorMsg = 'Erreur de sécurité - vérifiez les permissions';
+                } else if (error.message) {
+                    errorMsg += ': ' + error.message;
+                }
+                
+                showAlert(errorMsg, 'error');
+            }
+        }
+        
+        // FONCTION TIMER
+        function updateTimerDisplay(seconds) {
+            const timerElement = document.getElementById('timerDisplay');
+            if (timerElement) {
+                const minutes = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        // FONCTION ARRÊT ENREGISTREMENT
+        function stopRecording() {
+            try {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    console.log('[PSA Video] ⏹️ Arrêt enregistrement...');
+                    mediaRecorder.stop();
+                    
+                    // UI update
+                    const startBtn = document.getElementById('startRecordBtn');
+                    const stopBtn = document.getElementById('stopRecordBtn');
+                    const flipBtn = document.getElementById('flipCameraBtn');
+                    const overlay = document.getElementById('recordingOverlay');
+                    
+                    if (startBtn) startBtn.classList.remove('hidden');
+                    if (stopBtn) stopBtn.classList.add('hidden');
+                    if (flipBtn) flipBtn.disabled = false; // Réactiver rotation
+                    if (overlay) overlay.classList.add('hidden');
+                    
+                } else {
+                    console.warn('[PSA Video] ⚠️ Pas d\'enregistrement actif à arrêter');
+                }
+            } catch (error) {
+                console.error('[PSA Video] ❌ Erreur arrêt enregistrement:', error);
+                showAlert('Erreur lors de l\'arrêt: ' + error.message, 'error');
+            }
+        }
+        
+        // FONCTION D'UPLOAD VIDÉO
+        async function uploadVideo() {
+            try {
+                console.log('[PSA Video] 🔄 Début upload vidéo...');
+                
+                // Vérifications préalables
+                if (!recordedChunks || recordedChunks.length === 0) {
+                    showAlert('Aucune vidéo enregistrée à uploader. Enregistrez d\'abord une vidéo.', 'error');
+                    return;
+                }
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const submissionId = urlParams.get('id') || urlParams.get('submission_id');
+                
+                if (!submissionId) {
+                    showAlert('ID de soumission manquant. Impossible d\'uploader.', 'error');
+                    return;
+                }
+                
+                // Désactiver le bouton pendant l'upload
+                const uploadBtn = document.getElementById('uploadBtn');
+                if (uploadBtn) {
+                    uploadBtn.disabled = true;
+                    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Upload en cours...';
+                }
+                
+                // Créer le blob vidéo
+                const videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                console.log('[PSA Video] 📦 Blob créé:', videoBlob.size, 'bytes');
+                
+                // Créer FormData
+                const formData = new FormData();
+                formData.append('video', videoBlob, `psa_video_${submissionId}.webm`);
+                formData.append('submission_id', submissionId);
+                
+                // Afficher progress
+                const progressContainer = document.getElementById('progressContainer');
+                const uploadProgress = document.getElementById('uploadProgress');
+                if (progressContainer) progressContainer.classList.remove('hidden');
+                
+                // RÉCUPÉRER TOKEN DE SÉCURITÉ DEPUIS LE SERVEUR
+                console.log('[PSA Video] 🔐 Récupération token d\'upload...');
+                
+                const tokenResponse = await fetch(`/api/video/upload-token/${submissionId}`, {
+                    method: 'GET'
+                });
+                
+                if (!tokenResponse.ok) {
+                    throw new Error('Impossible d\'obtenir le token d\'upload');
+                }
+                
+                const tokenData = await tokenResponse.json();
+                const uploadUrl = `/api/video/upload/${submissionId}?token=${tokenData.token}&ts=${tokenData.timestamp}`;
+                
+                console.log('[PSA Video] ✅ Token d\'upload obtenu');
+                
+                // Upload avec fetch
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erreur HTTP: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('[PSA Video] ✅ Upload réussi:', result);
+                
+                // Succès
+                showAlert('Vidéo uploadée avec succès ! Preuve vidéo enregistrée.', 'success');
+                
+                // Masquer controls, afficher succès
+                const videoSection = document.getElementById('videoSection');
+                const successSection = document.getElementById('successSection');
+                
+                if (videoSection) videoSection.classList.add('hidden');
+                if (successSection) successSection.classList.remove('hidden');
+                
+                // Bouton nouvelle vidéo
+                const newRecordingBtn = document.getElementById('newRecordingBtn');
+                if (newRecordingBtn) {
+                    newRecordingBtn.onclick = () => location.reload();
+                }
+                
+            } catch (error) {
+                console.error('[PSA Video] ❌ Erreur upload:', error);
+                
+                let errorMsg = 'Erreur lors de l\'upload de la vidéo';
+                if (error.message) errorMsg += ': ' + error.message;
+                
+                showAlert(errorMsg, 'error');
+                
+                // Réactiver le bouton
+                const uploadBtn = document.getElementById('uploadBtn');
+                if (uploadBtn) {
+                    uploadBtn.disabled = false;
+                    uploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt me-2"></i>Uploader la Vidéo';
+                }
+            } finally {
+                // Masquer progress
+                const progressContainer = document.getElementById('progressContainer');
+                if (progressContainer) progressContainer.classList.add('hidden');
+            }
+        }
+        
+        // FONCTION D'ALERTE
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            if (alertContainer) {
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show`;
+                alert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                alertContainer.appendChild(alert);
+            }
+            console.log(`[PSA Video] ${type.toUpperCase()}: ${message}`);
+        }
+
+        // SOLUTION DIRECTE : Auto-chargement depuis l'URL sans dépendance externe
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[PSA Video] ✅ Interface vidéo chargée');
+            
+            // Vérifier si un submission_id est dans l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const submissionId = urlParams.get('id') || urlParams.get('submission_id');
+            
+            if (submissionId) {
+                console.log('[PSA Video] 🎯 ID détecté dans URL:', submissionId);
+                
+                // CACHER TOUTES LES SECTIONS QR IMMÉDIATEMENT
+                const qrScannerSection = document.getElementById('qrScannerSection');
+                const qrCodeSection = document.getElementById('qrCodeSection');
+                
+                if (qrScannerSection) {
+                    qrScannerSection.style.display = 'none';
+                    console.log('[PSA Video] ✅ QR scanner caché');
+                }
+                
+                if (qrCodeSection) {
+                    qrCodeSection.style.display = 'none';
+                    console.log('[PSA Video] ✅ QR code display caché');
+                }
+                
+                // CHARGER LES DONNÉES DE LA COMMANDE
+                loadSubmissionData(submissionId);
+            } else {
+                console.log('[PSA Video] 💡 Pas d\'ID - mode scanner QR normal');
+            }
+        });
+        
+        async function loadSubmissionData(submissionId) {
+            try {
+                console.log('[PSA Video] 📡 Chargement commande:', submissionId);
+                
+                // Afficher loading
+                const loadingSection = document.getElementById('loadingSection');
+                const submissionInfoSection = document.getElementById('submissionInfoSection');
+                
+                if (loadingSection) loadingSection.classList.remove('hidden');
+                
+                // Récupérer les données
+                const response = await fetch(`/api/public/submission/${submissionId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('[PSA Video] ✅ Données chargées:', data.submission.card_name);
+                    
+                    // Afficher les informations
+                    displaySubmissionInfo(data.submission);
+                    
+                    // Masquer loading, afficher info et vidéo
+                    if (loadingSection) loadingSection.classList.add('hidden');
+                    if (submissionInfoSection) submissionInfoSection.classList.remove('hidden');
+                    
+                    // Afficher la section vidéo directement
+                    const videoSection = document.getElementById('videoSection');
+                    if (videoSection) {
+                        videoSection.classList.remove('hidden');
+                        console.log('[PSA Video] ✅ Section vidéo affichée');
+                        
+                        // INITIALISER LA CAMÉRA IMMÉDIATEMENT
+                        initializeCamera();
+                    }
+                    
+                    console.log('[PSA Video] 🎉 Interface prête pour enregistrement!');
+                } else {
+                    throw new Error(data.message || 'Erreur chargement');
+                }
+            } catch (error) {
+                console.error('[PSA Video] ❌ Erreur:', error);
+                alert('Erreur: ' + error.message);
+            }
+        }
+        
+        function displaySubmissionInfo(submission) {
+            const detailsElement = document.getElementById('submissionDetails');
+            if (detailsElement) {
+                detailsElement.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-user me-2"></i>Client</h5>
+                            <p><strong>Email:</strong> ${submission.customer_email}</p>
+                            <p><strong>Type:</strong> ${submission.grading_type}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-credit-card me-2"></i>Carte</h5>
+                            <p><strong>Nom:</strong> ${submission.card_name}</p>
+                            <p><strong>ID:</strong> <code>${submission.submission_id}</code></p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

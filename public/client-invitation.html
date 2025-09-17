@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation PSA Grading - Votre Commande</title>
+    <link rel="stylesheet" href="css/client-invitation.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>🎯 Vérification de votre invitation...</h3>
+            <p>Nous validons vos informations, veuillez patienter.</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="error-state" style="display: none;">
+        <div class="error-content">
+            <div class="error-icon">❌</div>
+            <h2>Invitation Invalide</h2>
+            <div id="errorMessage" class="error-message">
+                Cette invitation n'est pas valide ou a expiré.
+            </div>
+            <div class="error-actions">
+                <a href="/signup" class="btn btn-primary signup-alternative">
+                    ✨ Créer mon compte directement
+                </a>
+                <a href="/" class="btn btn-secondary">Retour à l'accueil</a>
+                <a href="mailto:support@psagrading.com" class="btn btn-tertiary">Contacter le support</a>
+            </div>
+            
+            <div class="error-info">
+                <div class="info-box">
+                    <div class="info-icon">💡</div>
+                    <div class="info-content">
+                        <h4>Pas de problème !</h4>
+                        <p>Créez votre compte PSA directement - <strong>vos commandes existantes seront automatiquement liées</strong> à votre compte si vous utilisez la même adresse email.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="main-content" style="display: none;">
+        <header class="invitation-header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🎯 PSA Grading</h1>
+                    <span class="tagline">Certification professionnelle de cartes</span>
+                </div>
+                <div class="invitation-badge">
+                    <span class="badge-text">Invitation Client</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="invitation-main">
+            <div class="invitation-container">
+                <!-- Welcome Section -->
+                <section class="welcome-section">
+                    <h2 class="welcome-title">🎉 Bienvenue !</h2>
+                    <p class="welcome-subtitle">
+                        Vous avez été invité à accéder à votre commande PSA Grading.
+                        <br>Créez votre compte client pour suivre votre commande en temps réel.
+                    </p>
+                </section>
+
+                <!-- Order Details Section -->
+                <section class="order-section">
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h3>📄 Détails de votre commande</h3>
+                            <div class="order-id">
+                                <span class="label">Commande:</span>
+                                <span id="orderId" class="value">Chargement...</span>
+                            </div>
+                        </div>
+
+                        <div class="order-details">
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <span class="detail-label">🎴 Carte</span>
+                                    <span id="cardName" class="detail-value">Chargement...</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">⭐ Type PSA</span>
+                                    <span id="gradingType" class="detail-value">Chargement...</span>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <span class="detail-label">💰 Prix</span>
+                                    <span id="orderPrice" class="detail-value">Chargement...</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">📅 Date création</span>
+                                    <span id="orderDate" class="detail-value">Chargement...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-status">
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span id="orderStatus" class="status-text">Commande créée</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Authentication Section -->
+                <section class="auth-section">
+                    <div class="auth-container">
+                        <div class="auth-tabs">
+                            <button class="auth-tab active" data-tab="register">
+                                ✨ Créer un compte
+                            </button>
+                            <button class="auth-tab" data-tab="login">
+                                🔑 J'ai déjà un compte
+                            </button>
+                        </div>
+
+                        <!-- Register Form -->
+                        <div id="registerTab" class="auth-form active">
+                            <div class="form-header">
+                                <h4>Créer votre compte client</h4>
+                                <p>Accédez à votre dashboard personnel pour suivre vos commandes</p>
+                            </div>
+
+                            <form id="registerForm" class="client-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Prénom *</label>
+                                        <input type="text" id="firstName" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Nom *</label>
+                                        <input type="text" id="lastName" class="form-input" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" id="email" class="form-input" required readonly>
+                                    <small class="form-hint">Email pré-rempli depuis l'invitation</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Mot de passe *</label>
+                                    <input type="password" id="password" class="form-input" required>
+                                    <small class="form-hint">Au moins 8 caractères</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Confirmer le mot de passe *</label>
+                                    <input type="password" id="confirmPassword" class="form-input" required>
+                                </div>
+
+                                <div class="form-group checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="acceptTerms" required>
+                                        <span class="checkmark"></span>
+                                        J'accepte les <a href="/terms" target="_blank">conditions d'utilisation</a> et la <a href="/privacy" target="_blank">politique de confidentialité</a>
+                                    </label>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        ✨ Créer mon compte et accéder
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Login Form -->
+                        <div id="loginTab" class="auth-form">
+                            <div class="form-header">
+                                <h4>Connexion à votre compte</h4>
+                                <p>Connectez-vous pour accéder à votre dashboard</p>
+                            </div>
+
+                            <form id="loginForm" class="client-form">
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" id="loginEmail" class="form-input" required readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Mot de passe</label>
+                                    <input type="password" id="loginPassword" class="form-input" required>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        🔑 Se connecter et accéder
+                                    </button>
+                                </div>
+
+                                <div class="form-footer">
+                                    <a href="/forgot-password" class="forgot-link">Mot de passe oublié ?</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Alternative Signup Section -->
+                <section class="alternative-signup">
+                    <div class="alternative-card">
+                        <div class="alternative-header">
+                            <div class="alternative-icon">🚀</div>
+                            <h3>Vous n'avez pas reçu d'invitation ?</h3>
+                        </div>
+                        
+                        <div class="alternative-content">
+                            <p class="alternative-description">
+                                <strong>Créez votre compte PSA directement</strong> - Plus besoin d'attendre une invitation ! 
+                                Vos commandes existantes seront automatiquement liées à votre compte.
+                            </p>
+                            
+                            <div class="alternative-benefits">
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">⚡</span>
+                                    <span class="benefit-text">Accès immédiat</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">🔗</span>
+                                    <span class="benefit-text">Commandes automatiquement liées</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">📱</span>
+                                    <span class="benefit-text">Suivi en temps réel</span>
+                                </div>
+                            </div>
+                            
+                            <div class="alternative-actions">
+                                <a href="/signup" class="btn-signup-free">
+                                    ✨ Inscription libre - Créer mon compte
+                                </a>
+                                <p class="alternative-note">
+                                    <span class="note-icon">💡</span>
+                                    Vous avez déjà commandé ? Utilisez la même adresse email pour retrouver vos commandes !
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Form Status Messages -->
+                <div id="formError" class="form-message error" style="display: none;">
+                    <div class="message-content">
+                        <span class="message-icon">❌</span>
+                        <span id="formErrorText" class="message-text"></span>
+                    </div>
+                </div>
+
+                <div id="formSuccess" class="form-message success" style="display: none;">
+                    <div class="message-content">
+                        <span class="message-icon">✅</span>
+                        <span id="formSuccessText" class="message-text"></span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="invitation-footer">
+            <div class="footer-content">
+                <p>&copy; 2024 PSA Grading. Service professionnel de certification de cartes.</p>
+                <div class="footer-links">
+                    <a href="/contact">Contact</a>
+                    <a href="/support">Support</a>
+                    <a href="/terms">Conditions</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/client-invitation.js"></script>
+</body>
+</html>

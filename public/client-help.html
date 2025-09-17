@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aide & FAQ - PSA Grading Service</title>
+    
+    <!-- Meta tags pour SEO -->
+    <meta name="description" content="Aide et questions fréquentes sur l'accès aux vidéos de preuve PSA. Guide complet pour utiliser votre portail client.">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="shopify-psa-logo.png">
+    
+    <!-- Styles -->
+    <style>
+        :root {
+            --psa-blue: #003d82;
+            --psa-blue-light: #004a9b;
+            --psa-red: #dc143c;
+            --psa-gold: #ffd700;
+            --success-green: #28a745;
+            --warning-orange: #fd7e14;
+            --white: #ffffff;
+            --gray-50: #f8f9fa;
+            --gray-100: #e9ecef;
+            --gray-200: #dee2e6;
+            --gray-600: #495057;
+            --gray-700: #343a40;
+            --shadow-md: 0 4px 8px rgba(0, 61, 130, 0.15);
+            --spacing-sm: 0.75rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-xxl: 3rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-700);
+            background: linear-gradient(135deg, var(--psa-blue) 0%, var(--psa-blue-light) 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* Header */
+        .help-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 3px solid var(--psa-gold);
+            padding: var(--spacing-xl) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .psa-logo {
+            width: 60px;
+            height: auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 61, 130, 0.2));
+        }
+
+        .header-text h1 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--psa-blue);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .header-text p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .back-to-portal {
+            background: linear-gradient(135deg, var(--psa-red), #e6194f);
+            color: var(--white);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3);
+        }
+
+        .back-to-portal:hover {
+            background: linear-gradient(135deg, var(--psa-blue), var(--psa-blue-light));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 61, 130, 0.4);
+        }
+
+        /* Main content */
+        .help-main {
+            padding: var(--spacing-xxl) 0;
+            background: var(--white);
+            margin: var(--spacing-xl) 0;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .help-intro {
+            text-align: center;
+            margin-bottom: var(--spacing-xxl);
+            padding-bottom: var(--spacing-xl);
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .help-intro h2 {
+            font-size: 2rem;
+            color: var(--psa-blue);
+            margin-bottom: var(--spacing-lg);
+            font-weight: 900;
+        }
+
+        .help-intro p {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* FAQ sections */
+        .faq-sections {
+            display: grid;
+            gap: var(--spacing-xl);
+        }
+
+        .faq-section {
+            background: var(--gray-50);
+            border-radius: 16px;
+            padding: var(--spacing-xl);
+            border: 1px solid var(--gray-200);
+        }
+
+        .faq-section-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--psa-blue);
+        }
+
+        .faq-section-icon {
+            font-size: 2rem;
+            padding: var(--spacing-sm);
+            background: linear-gradient(135deg, var(--psa-blue), var(--psa-blue-light));
+            color: var(--white);
+            border-radius: 8px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .faq-items {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+
+        .faq-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: var(--spacing-xl);
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-question {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--psa-blue);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+        }
+
+        .faq-answer {
+            color: var(--gray-700);
+            line-height: 1.7;
+        }
+
+        .faq-answer ul {
+            margin: var(--spacing-md) 0;
+            padding-left: var(--spacing-xl);
+        }
+
+        .faq-answer li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .faq-answer strong {
+            color: var(--psa-blue);
+            font-weight: 700;
+        }
+
+        .faq-answer code {
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
+            border: 2px solid var(--psa-gold);
+            border-radius: 12px;
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .highlight-box .icon {
+            font-size: 1.5rem;
+            margin-right: var(--spacing-sm);
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid var(--warning-orange);
+            border-radius: 12px;
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .warning-box .icon {
+            color: var(--warning-orange);
+            font-size: 1.5rem;
+            margin-right: var(--spacing-sm);
+        }
+
+        /* Contact section */
+        .contact-section {
+            background: linear-gradient(135deg, var(--psa-blue), var(--psa-blue-light));
+            color: var(--white);
+            border-radius: 16px;
+            padding: var(--spacing-xxl);
+            text-align: center;
+            margin-top: var(--spacing-xxl);
+        }
+
+        .contact-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-lg);
+            font-weight: 700;
+        }
+
+        .contact-section p {
+            margin-bottom: var(--spacing-xl);
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .contact-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-option {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .contact-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--psa-gold);
+            transform: translateY(-2px);
+        }
+
+        .contact-option .icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-md);
+            display: block;
+        }
+
+        .contact-option h4 {
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 700;
+        }
+
+        .contact-option p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .contact-option a {
+            color: var(--psa-gold);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .contact-option a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .help-footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--white);
+            padding: var(--spacing-xl) 0;
+            text-align: center;
+            margin-top: var(--spacing-xl);
+        }
+
+        .help-footer p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .help-footer a {
+            color: var(--psa-gold);
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 var(--spacing-md);
+        }
+
+        .help-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--spacing-sm);
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--spacing-md);
+            }
+
+            .header-info {
+                flex-direction: column;
+            }
+
+            .help-intro h2 {
+                font-size: 1.5rem;
+            }
+
+            .faq-section-title {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--spacing-sm);
+            }
+
+            .contact-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll smooth */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Focus states */
+        a:focus, button:focus {
+            outline: 2px solid var(--psa-gold);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="help-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-info">
+                    <img src="shopify-psa-logo.png" alt="PSA Grading Service" class="psa-logo">
+                    <div class="header-text">
+                        <h1>Centre d'aide & FAQ</h1>
+                        <p>Tout savoir sur votre vidéo de preuve PSA</p>
+                    </div>
+                </div>
+                <a href="/video-proof-client" class="back-to-portal">
+                    🔐 Accéder à ma vidéo
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="help-main">
+        <div class="container">
+            <!-- Introduction -->
+            <section class="help-intro">
+                <h2>🎬 Guide d'utilisation de votre vidéo de preuve</h2>
+                <p>
+                    Votre vidéo de preuve PSA est un enregistrement sécurisé réalisé à l'ouverture de votre colis. 
+                    Elle garantit la transparence et vous protège en cas de litige sur l'état de vos cartes.
+                </p>
+            </section>
+
+            <!-- FAQ Sections -->
+            <div class="faq-sections">
+                
+                <!-- Section Accès -->
+                <section class="faq-section">
+                    <h3 class="faq-section-title">
+                        <div class="faq-section-icon">🔑</div>
+                        Accéder à ma vidéo
+                    </h3>
+                    
+                    <div class="faq-items">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🔍 Où trouver mon numéro de soumission PSA ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>Votre numéro de soumission PSA (ex: <code>PSA1757960385561451392730</code>) se trouve dans :</p>
+                                <ul>
+                                    <li><strong>📧 Email de confirmation</strong> envoyé après votre commande</li>
+                                    <li><strong>📱 QR code</strong> sur votre facture ou reçu</li>
+                                    <li><strong>🛒 Historique de commandes</strong> sur notre boutique Shopify</li>
+                                    <li><strong>📄 Documents d'expédition</strong> joints au colis</li>
+                                </ul>
+                                
+                                <div class="highlight-box">
+                                    <span class="icon">💡</span>
+                                    <strong>Astuce :</strong> Le numéro commence toujours par "PSA" suivi de chiffres. 
+                                    Il fait généralement 20-25 caractères au total.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                ✉️ Que sont les "4 derniers caractères de l'email" ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>Il s'agit des 4 derniers caractères de votre adresse email <strong>avant le symbole @</strong>.</p>
+                                
+                                <p><strong>Exemples :</strong></p>
+                                <ul>
+                                    <li>Email : <code>john.doe@gmail.com</code> → Entrez : <code>john</code></li>
+                                    <li>Email : <code>pokemon.fan@outlook.fr</code> → Entrez : <code>.fan</code></li>
+                                    <li>Email : <code>cardcollector2024@yahoo.com</code> → Entrez : <code>2024</code></li>
+                                </ul>
+                                
+                                <div class="warning-box">
+                                    <span class="icon">⚠️</span>
+                                    <strong>Important :</strong> Respectez exactement les majuscules, minuscules, points et chiffres 
+                                    comme dans votre email original.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🔒 Pourquoi cette double vérification ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>Cette sécurité protège votre vie privée en s'assurant que :</p>
+                                <ul>
+                                    <li>Seul le propriétaire de la commande peut accéder à la vidéo</li>
+                                    <li>Vos données personnelles restent confidentielles</li>
+                                    <li>Aucun accès non autorisé n'est possible</li>
+                                </ul>
+                                <p>Même si quelqu'un trouve votre numéro PSA, il lui faudrait aussi connaître votre email.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                ⏰ Combien de temps dure mon accès ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>Une fois connecté, vous avez accès à votre vidéo pendant <strong>1 heure</strong>.</p>
+                                <p>Après expiration, vous pouvez vous reconnecter autant de fois que nécessaire avec vos mêmes identifiants.</p>
+                                
+                                <div class="highlight-box">
+                                    <span class="icon">🔄</span>
+                                    <strong>Accès illimité :</strong> Vous pouvez revenir voir votre vidéo 
+                                    à tout moment, sans limite de nombre de connexions.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section Problèmes -->
+                <section class="faq-section">
+                    <h3 class="faq-section-title">
+                        <div class="faq-section-icon">⚠️</div>
+                        Problèmes fréquents
+                    </h3>
+                    
+                    <div class="faq-items">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🚫 "Numéro de soumission non trouvé"
+                            </div>
+                            <div class="faq-answer">
+                                <p>Vérifiez ces points dans l'ordre :</p>
+                                <ul>
+                                    <li><strong>Copier-coller</strong> le numéro depuis votre email pour éviter les erreurs de frappe</li>
+                                    <li><strong>Vérifier le format :</strong> doit commencer par "PSA" + chiffres</li>
+                                    <li><strong>Attendre 24-48h</strong> après l'expédition (délai de traitement)</li>
+                                    <li><strong>Vérifier l'email</strong> utilisé pour la commande</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                ❌ "Les caractères de l'email ne correspondent pas"
+                            </div>
+                            <div class="faq-answer">
+                                <p>Solutions à essayer :</p>
+                                <ul>
+                                    <li><strong>Vérifier l'email exact</strong> utilisé pour la commande</li>
+                                    <li><strong>Respecter la casse</strong> (majuscules/minuscules)</li>
+                                    <li><strong>Inclure les points et chiffres</strong> s'il y en a</li>
+                                    <li><strong>Essayer plusieurs emails</strong> si vous en avez plusieurs</li>
+                                </ul>
+                                
+                                <p><strong>Exemple détaillé :</strong></p>
+                                <p>Si votre email est <code>Jean.Dupont123@gmail.com</code>, entrez exactement : <code>t123</code></p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🎬 Ma vidéo ne se charge pas ou est bloquée
+                            </div>
+                            <div class="faq-answer">
+                                <p>Étapes de dépannage :</p>
+                                <ul>
+                                    <li><strong>Vérifier la connexion internet</strong> (vidéo = gros fichier)</li>
+                                    <li><strong>Essayer un autre navigateur</strong> (Chrome, Firefox, Safari)</li>
+                                    <li><strong>Désactiver bloqueur de pub</strong> temporairement</li>
+                                    <li><strong>Vider le cache</strong> du navigateur</li>
+                                    <li><strong>Essayer sur un autre appareil</strong> (smartphone, tablette)</li>
+                                </ul>
+                                
+                                <div class="warning-box">
+                                    <span class="icon">📱</span>
+                                    <strong>Mobile :</strong> Sur smartphone, utilisez le WiFi plutôt que la 4G 
+                                    pour éviter les coupures de chargement.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🔒 "Trop de tentatives" - Je suis bloqué
+                            </div>
+                            <div class="faq-answer">
+                                <p>Ce blocage temporaire protège contre les accès non autorisés.</p>
+                                <ul>
+                                    <li><strong>Attendre 1 heure</strong> avant de réessayer</li>
+                                    <li><strong>Vérifier vos identifiants</strong> avant la prochaine tentative</li>
+                                    <li><strong>Utiliser un autre réseau</strong> (4G au lieu du WiFi) si urgent</li>
+                                </ul>
+                                
+                                <p>Si le problème persiste, contactez-nous avec votre numéro PSA.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section Technique -->
+                <section class="faq-section">
+                    <h3 class="faq-section-title">
+                        <div class="faq-section-icon">⚙️</div>
+                        Informations techniques
+                    </h3>
+                    
+                    <div class="faq-items">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                💾 Puis-je télécharger ma vidéo ?
+                            </div>
+                            <div class="faq-answer">
+                                <p><strong>Non, le téléchargement n'est pas autorisé</strong> pour des raisons de sécurité et de droits d'auteur.</p>
+                                <p>Vous pouvez :</p>
+                                <ul>
+                                    <li>Regarder la vidéo autant de fois que vous voulez</li>
+                                    <li>Vous reconnecter à tout moment</li>
+                                    <li>Faire des captures d'écran si nécessaire</li>
+                                    <li>Demander une copie officielle si besoin légal</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🎥 Quel format et qualité de vidéo ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>Caractéristiques techniques :</p>
+                                <ul>
+                                    <li><strong>Format :</strong> MP4 ou WebM (HD)</li>
+                                    <li><strong>Qualité :</strong> 1080p minimum</li>
+                                    <li><strong>Durée :</strong> Variable selon le nombre de cartes</li>
+                                    <li><strong>Taille :</strong> Optimisée pour un chargement rapide</li>
+                                </ul>
+                                <p>La vidéo est adaptée automatiquement à votre appareil et connexion.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🔐 Ma vidéo est-elle sécurisée ?
+                            </div>
+                            <div class="faq-answer">
+                                <p><strong>Oui, votre vie privée est protégée :</strong></p>
+                                <ul>
+                                    <li>Connexion chiffrée HTTPS</li>
+                                    <li>Accès temporaire avec expiration</li>
+                                    <li>Aucun stockage sur votre appareil</li>
+                                    <li>Logs d'accès pour audit sécurité</li>
+                                </ul>
+                                <p>Seuls vous et l'équipe PSA autorisée pouvons accéder à votre vidéo.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🌐 Quels navigateurs sont supportés ?
+                            </div>
+                            <div class="faq-answer">
+                                <p><strong>Navigateurs recommandés :</strong></p>
+                                <ul>
+                                    <li>Chrome 90+ (recommandé)</li>
+                                    <li>Firefox 88+</li>
+                                    <li>Safari 14+</li>
+                                    <li>Edge 90+</li>
+                                </ul>
+                                <p><strong>Appareils supportés :</strong> PC, Mac, smartphones Android/iOS, tablettes</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section À propos -->
+                <section class="faq-section">
+                    <h3 class="faq-section-title">
+                        <div class="faq-section-icon">📹</div>
+                        À propos des vidéos de preuve
+                    </h3>
+                    
+                    <div class="faq-items">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                🎯 Pourquoi filmer l'ouverture de mon colis ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>La vidéo de preuve vous offre plusieurs garanties :</p>
+                                <ul>
+                                    <li><strong>🛡️ Protection contre les litiges</strong> sur l'état des cartes</li>
+                                    <li><strong>📹 Transparence totale</strong> du processus de réception</li>
+                                    <li><strong>⚖️ Preuve légale</strong> en cas de réclamation d'assurance</li>
+                                    <li><strong>🔍 Traçabilité complète</strong> de votre envoi</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                📋 Que montre exactement la vidéo ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>Contenu type d'une vidéo de preuve :</p>
+                                <ul>
+                                    <li>Identification du colis et expéditeur</li>
+                                    <li>État de l'emballage avant ouverture</li>
+                                    <li>Ouverture filmée en continu</li>
+                                    <li>État de chaque carte sortie du colis</li>
+                                    <li>Vérification conformité vs commande</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                ⏳ Combien de temps la vidéo est-elle conservée ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>Durée de conservation :</p>
+                                <ul>
+                                    <li><strong>Minimum 2 ans</strong> pour toutes les commandes</li>
+                                    <li><strong>5 ans</strong> pour les commandes haute valeur</li>
+                                    <li><strong>Conservation prolongée</strong> en cas de litige</li>
+                                </ul>
+                                <p>Vous gardez l'accès pendant toute la période de conservation.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                📞 Comment signaler un problème avec ma vidéo ?
+                            </div>
+                            <div class="faq-answer">
+                                <p>Si votre vidéo présente un problème :</p>
+                                <ul>
+                                    <li><strong>Bouton "Signaler un problème"</strong> directement dans le portail</li>
+                                    <li><strong>Email support :</strong> support@psa-grading.com</li>
+                                    <li><strong>Formulaire détaillé</strong> avec numéro de ticket automatique</li>
+                                </ul>
+                                <p><strong>Réponse garantie sous 24-48h ouvrées</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Contact Section -->
+            <section class="contact-section">
+                <h3>🆘 Besoin d'aide supplémentaire ?</h3>
+                <p>Notre équipe support est là pour vous aider à tout moment.</p>
+                
+                <div class="contact-options">
+                    <div class="contact-option">
+                        <span class="icon">📧</span>
+                        <h4>Email Support</h4>
+                        <p>
+                            <a href="mailto:support@psa-grading.com">support@psa-grading.com</a><br>
+                            Réponse sous 24h ouvrées
+                        </p>
+                    </div>
+                    
+                    <div class="contact-option">
+                        <span class="icon">🎫</span>
+                        <h4>Signaler un Problème</h4>
+                        <p>
+                            <a href="/video-proof-client#report">Formulaire de signalement</a><br>
+                            Avec suivi par numéro de ticket
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="help-footer">
+        <div class="container">
+            <p>
+                &copy; 2024 PSA Grading Service - Centre d'aide client |
+                <a href="/video-proof-client">Portail Vidéo</a> |
+                <a href="/">Accueil</a> |
+                <a href="mailto:support@psa-grading.com">Contact</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

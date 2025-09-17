@@ -1,0 +1,4068 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Client - PSA Grading Service</title>
+    <meta name="description" content="Espace client PSA - Suivi de vos commandes de gradation Pokémon en temps réel">
+    <link rel="icon" type="image/png" href="shopify-psa-logo.png">
+    
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <style>
+        /* =============================================================================
+           PSA CLIENT DASHBOARD - STYLES COMPLETS
+           Design responsive mobile-first pour espace client
+           ============================================================================= */
+
+        :root {
+          /* Couleurs PSA */
+          --psa-blue: #003d82;
+          --psa-blue-dark: #002c61;
+          --psa-blue-light: #004a9b;
+          --psa-red: #dc143c;
+          --psa-gold: #ffd700;
+          --psa-gold-dark: #e6c200;
+          
+          /* Couleurs système */
+          --success-green: #28a745;
+          --success-light: #d4edda;
+          --warning-orange: #fd7e14;
+          --warning-light: #fff3cd;
+          --danger-red: #dc3545;
+          --danger-light: #f8d7da;
+          --info-blue: #17a2b8;
+          --info-light: #d1ecf1;
+          
+          /* Couleurs neutres */
+          --white: #ffffff;
+          --gray-50: #f8f9fa;
+          --gray-100: #e9ecef;
+          --gray-200: #dee2e6;
+          --gray-300: #ced4da;
+          --gray-400: #adb5bd;
+          --gray-500: #6c757d;
+          --gray-600: #495057;
+          --gray-700: #343a40;
+          --gray-800: #212529;
+          --gray-900: #000000;
+          
+          /* Spacing */
+          --spacing-xs: 0.5rem;
+          --spacing-sm: 0.75rem;
+          --spacing-md: 1rem;
+          --spacing-lg: 1.5rem;
+          --spacing-xl: 2rem;
+          --spacing-xxl: 3rem;
+          
+          /* Shadows */
+          --shadow-sm: 0 2px 4px rgba(0, 61, 130, 0.1);
+          --shadow-md: 0 4px 8px rgba(0, 61, 130, 0.15);
+          --shadow-lg: 0 8px 16px rgba(0, 61, 130, 0.2);
+          --shadow-xl: 0 16px 32px rgba(0, 61, 130, 0.25);
+          
+          /* Transitions */
+          --transition-fast: 0.15s ease;
+          --transition-normal: 0.3s ease;
+          --transition-slow: 0.5s ease;
+        }
+
+        /* Reset et base */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Helvetica Neue', Arial, sans-serif;
+          line-height: 1.6;
+          color: var(--gray-700);
+          background: linear-gradient(135deg, var(--psa-blue) 0%, var(--psa-blue-light) 100%);
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 var(--spacing-md);
+        }
+
+        @media (max-width: 768px) {
+          .container {
+            padding: 0 var(--spacing-sm);
+          }
+        }
+
+        /* =============================================================================
+           HEADER CLIENT
+           ============================================================================= */
+
+        .client-header {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border-bottom: 3px solid var(--psa-gold);
+          padding: var(--spacing-lg) 0;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: var(--spacing-lg);
+        }
+
+        .header-logo-section {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md);
+        }
+
+        .psa-logo {
+          width: 80px;
+          height: auto;
+          filter: drop-shadow(0 2px 4px rgba(0, 61, 130, 0.2));
+        }
+
+        .header-text h1 {
+          font-size: 1.75rem;
+          font-weight: 900;
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-xs);
+        }
+
+        .header-text p {
+          color: var(--gray-600);
+          font-size: 0.95rem;
+        }
+
+        .header-actions {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md);
+        }
+
+        .user-info {
+          text-align: right;
+          color: var(--gray-600);
+          font-size: 0.9rem;
+        }
+
+        .user-name {
+          font-weight: 600;
+          color: var(--psa-blue);
+        }
+
+        .btn-logout {
+          background: var(--psa-red);
+          color: var(--white);
+          border: none;
+          padding: var(--spacing-sm) var(--spacing-md);
+          border-radius: 6px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition-normal);
+        }
+
+        .btn-logout:hover {
+          background: #c82333;
+          transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+          .header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--spacing-md);
+          }
+          
+          .header-actions {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+          }
+          
+          .psa-logo {
+            width: 60px;
+          }
+          
+          .header-text h1 {
+            font-size: 1.5rem;
+          }
+        }
+
+        /* =============================================================================
+           MAIN CONTENT
+           ============================================================================= */
+
+        .client-main {
+          flex: 1;
+          padding: var(--spacing-xl) 0;
+        }
+
+        .view {
+          display: none;
+        }
+
+        .view.active {
+          display: block;
+        }
+
+        /* =============================================================================
+           SECTION AUTHENTIFICATION
+           ============================================================================= */
+
+        .auth-section {
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .auth-card {
+          background: var(--white);
+          border-radius: 16px;
+          box-shadow: var(--shadow-lg);
+          overflow: hidden;
+          max-width: 500px;
+          margin: 0 auto;
+          border: 2px solid var(--psa-gold);
+        }
+
+        .auth-header {
+          background: linear-gradient(135deg, var(--psa-blue), var(--psa-blue-light));
+          color: var(--white);
+          padding: var(--spacing-xl);
+          text-align: center;
+        }
+
+        .auth-header h2 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-bottom: var(--spacing-sm);
+        }
+
+        .auth-header p {
+          opacity: 0.9;
+          font-size: 0.95rem;
+        }
+
+        .auth-form {
+          padding: var(--spacing-xl);
+        }
+
+        .form-group {
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+          display: block;
+          margin-bottom: var(--spacing-sm);
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: var(--gray-700);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+          width: 100%;
+          padding: var(--spacing-md);
+          border: 2px solid var(--gray-300);
+          border-radius: 8px;
+          font-size: 1rem;
+          transition: var(--transition-normal);
+          background: var(--white);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+          outline: none;
+          border-color: var(--psa-blue);
+          box-shadow: 0 0 0 3px rgba(0, 61, 130, 0.1);
+        }
+
+        .form-input.error {
+          border-color: var(--danger-red);
+          box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .form-hint {
+          display: block;
+          margin-top: var(--spacing-xs);
+          font-size: 0.85rem;
+          color: var(--gray-500);
+        }
+
+        .form-error {
+          display: block;
+          margin-top: var(--spacing-xs);
+          font-size: 0.85rem;
+          color: var(--danger-red);
+          font-weight: 500;
+        }
+
+        /* Bouton de soumission */
+        .auth-submit-btn {
+          width: 100%;
+          background: linear-gradient(135deg, var(--psa-red), #e6194f);
+          color: var(--white);
+          border: none;
+          padding: var(--spacing-md) var(--spacing-lg);
+          border-radius: 8px;
+          font-size: 1.1rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: var(--transition-normal);
+          position: relative;
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .auth-submit-btn:hover:not(:disabled) {
+          background: linear-gradient(135deg, var(--psa-blue), var(--psa-blue-light));
+          transform: translateY(-1px);
+          box-shadow: var(--shadow-md);
+        }
+
+        .auth-submit-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .btn-loader {
+          display: none;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 20px;
+          height: 20px;
+          border: 2px solid transparent;
+          border-top: 2px solid var(--white);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        .auth-submit-btn.loading .btn-text {
+          opacity: 0;
+        }
+
+        .auth-submit-btn.loading .btn-loader {
+          display: block;
+        }
+
+        .auth-switch {
+          text-align: center;
+          padding-top: var(--spacing-md);
+          border-top: 1px solid var(--gray-200);
+        }
+
+        .auth-switch a {
+          color: var(--psa-blue);
+          text-decoration: none;
+          font-weight: 600;
+        }
+
+        .auth-switch a:hover {
+          text-decoration: underline;
+        }
+
+        @keyframes spin {
+          0% { transform: translate(-50%, -50%) rotate(0deg); }
+          100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* =============================================================================
+           DASHBOARD OVERVIEW
+           ============================================================================= */
+
+        .dashboard-section {
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .welcome-banner {
+          background: linear-gradient(135deg, var(--white), var(--gray-50));
+          border: 2px solid var(--psa-gold);
+          border-radius: 16px;
+          padding: var(--spacing-xl);
+          margin-bottom: var(--spacing-xl);
+          box-shadow: var(--shadow-md);
+        }
+
+        .welcome-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: var(--spacing-lg);
+        }
+
+        .welcome-text h2 {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-sm);
+        }
+
+        .welcome-text p {
+          color: var(--gray-600);
+          font-size: 1.1rem;
+        }
+
+        .welcome-stats {
+          display: flex;
+          gap: var(--spacing-lg);
+          text-align: center;
+        }
+
+        .stat-item {
+          background: var(--white);
+          padding: var(--spacing-md);
+          border-radius: 12px;
+          box-shadow: var(--shadow-sm);
+          border: 1px solid var(--gray-200);
+          min-width: 100px;
+        }
+
+        .stat-number {
+          font-size: 1.5rem;
+          font-weight: 800;
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+          font-size: 0.85rem;
+          color: var(--gray-600);
+          font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+          .welcome-content {
+            flex-direction: column;
+            text-align: center;
+          }
+          
+          .welcome-stats {
+            justify-content: center;
+          }
+          
+          .stat-item {
+            min-width: 80px;
+          }
+        }
+
+        /* Stats Cards Grid */
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: var(--spacing-lg);
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .stat-card {
+          background: var(--white);
+          padding: var(--spacing-lg);
+          border-radius: 12px;
+          box-shadow: var(--shadow-md);
+          border-left: 4px solid var(--psa-blue);
+          transition: var(--transition-normal);
+        }
+
+        .stat-card:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card.warning {
+          border-left-color: var(--warning-orange);
+        }
+
+        .stat-card.success {
+          border-left-color: var(--success-green);
+        }
+
+        .stat-card.danger {
+          border-left-color: var(--danger-red);
+        }
+
+        .stat-card-header {
+          display: flex;
+          justify-content: between;
+          align-items: center;
+          margin-bottom: var(--spacing-md);
+        }
+
+        .stat-card-title {
+          font-size: 0.9rem;
+          color: var(--gray-600);
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .stat-card-value {
+          font-size: 2rem;
+          font-weight: 800;
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-card-label {
+          color: var(--gray-600);
+          font-size: 0.95rem;
+        }
+
+        /* =============================================================================
+           ORDERS SECTION
+           ============================================================================= */
+
+        .orders-section {
+          background: var(--white);
+          border-radius: 12px;
+          box-shadow: var(--shadow-lg);
+          overflow: hidden;
+        }
+
+        .orders-header {
+          padding: var(--spacing-lg);
+          border-bottom: 1px solid var(--gray-200);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: var(--gray-50);
+        }
+
+        .orders-title {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: var(--psa-blue);
+        }
+
+        .btn-new-order {
+          background: var(--psa-blue);
+          color: var(--white);
+          border: none;
+          padding: var(--spacing-sm) var(--spacing-md);
+          border-radius: 6px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition-normal);
+          text-decoration: none;
+          display: inline-block;
+        }
+
+        .btn-new-order:hover {
+          background: var(--psa-blue-dark);
+          transform: translateY(-1px);
+        }
+
+        /* Orders Table */
+        .orders-table-container {
+          overflow-x: auto;
+        }
+
+        .orders-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        .orders-table th,
+        .orders-table td {
+          padding: var(--spacing-md);
+          text-align: left;
+          border-bottom: 1px solid var(--gray-200);
+        }
+
+        .orders-table th {
+          background: var(--gray-50);
+          font-weight: 600;
+          color: var(--gray-700);
+          font-size: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .orders-table tbody tr:hover {
+          background: var(--gray-50);
+        }
+
+        .order-id {
+          font-family: monospace;
+          font-weight: 600;
+          color: var(--psa-blue);
+        }
+
+        .order-status {
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+
+        .order-status.pending {
+          background: var(--warning-light);
+          color: #856404;
+        }
+
+        .order-status.in_progress {
+          background: var(--info-light);
+          color: #0c5460;
+        }
+
+        .order-status.completed {
+          background: var(--success-light);
+          color: #155724;
+        }
+
+        .order-actions {
+          display: flex;
+          gap: var(--spacing-sm);
+        }
+
+        .btn-action {
+          padding: 0.4rem 0.8rem;
+          border: none;
+          border-radius: 4px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition-fast);
+        }
+
+        .btn-view {
+          background: var(--psa-blue);
+          color: var(--white);
+        }
+
+        .btn-view:hover {
+          background: var(--psa-blue-dark);
+        }
+
+        .btn-video {
+          background: var(--psa-red);
+          color: var(--white);
+        }
+
+        .btn-video:hover {
+          background: #c82333;
+        }
+
+        /* Empty State */
+        .empty-state {
+          text-align: center;
+          padding: var(--spacing-xxl);
+          color: var(--gray-500);
+        }
+
+        .empty-state-icon {
+          font-size: 3rem;
+          margin-bottom: var(--spacing-lg);
+          opacity: 0.5;
+        }
+
+        .empty-state h3 {
+          font-size: 1.2rem;
+          margin-bottom: var(--spacing-md);
+          color: var(--gray-600);
+        }
+
+        .empty-state p {
+          margin-bottom: var(--spacing-lg);
+        }
+
+        /* =============================================================================
+           ORDER DETAILS MODAL
+           ============================================================================= */
+
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .modal-content {
+          background: var(--white);
+          border-radius: 16px;
+          box-shadow: var(--shadow-xl);
+          max-width: 600px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          position: relative;
+        }
+
+        .modal-header {
+          padding: var(--spacing-lg);
+          border-bottom: 1px solid var(--gray-200);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: var(--gray-50);
+        }
+
+        .modal-title {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: var(--psa-blue);
+        }
+
+        .modal-close {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: var(--gray-500);
+          padding: var(--spacing-sm);
+          border-radius: 4px;
+          transition: var(--transition-fast);
+        }
+
+        .modal-close:hover {
+          background: var(--gray-200);
+          color: var(--gray-700);
+        }
+
+        .modal-body {
+          padding: var(--spacing-lg);
+        }
+
+        .detail-group {
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .detail-label {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--gray-600);
+          margin-bottom: var(--spacing-xs);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+          font-size: 1rem;
+          color: var(--gray-800);
+          background: var(--gray-50);
+          padding: var(--spacing-sm);
+          border-radius: 6px;
+          border: 1px solid var(--gray-200);
+        }
+
+        /* =============================================================================
+           NAVIGATION
+           ============================================================================= */
+
+        .nav-menu {
+          background: var(--white);
+          border-radius: 12px;
+          box-shadow: var(--shadow-md);
+          padding: var(--spacing-md);
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .nav-list {
+          display: flex;
+          list-style: none;
+          gap: var(--spacing-md);
+          justify-content: center;
+        }
+
+        .nav-item {
+          flex: 1;
+        }
+
+        .nav-link {
+          display: block;
+          padding: var(--spacing-md);
+          text-align: center;
+          text-decoration: none;
+          color: var(--gray-600);
+          font-weight: 600;
+          border-radius: 8px;
+          transition: var(--transition-normal);
+          cursor: pointer;
+        }
+
+        .nav-link:hover {
+          background: var(--gray-100);
+          color: var(--psa-blue);
+        }
+
+        .nav-link.active {
+          background: var(--psa-blue);
+          color: var(--white);
+        }
+
+        @media (max-width: 768px) {
+          .nav-list {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+          }
+          
+          .nav-link {
+            padding: var(--spacing-sm);
+            font-size: 0.9rem;
+          }
+        }
+
+        /* =============================================================================
+           ALERTS & NOTIFICATIONS
+           ============================================================================= */
+
+        .alert {
+          padding: var(--spacing-md) var(--spacing-lg);
+          border-radius: 8px;
+          margin-bottom: var(--spacing-lg);
+          border: 1px solid transparent;
+          position: relative;
+        }
+
+        .alert-success {
+          background: var(--success-light);
+          border-color: var(--success-green);
+          color: #155724;
+        }
+
+        .alert-warning {
+          background: var(--warning-light);
+          border-color: var(--warning-orange);
+          color: #856404;
+        }
+
+        .alert-danger {
+          background: var(--danger-light);
+          border-color: var(--danger-red);
+          color: #721c24;
+        }
+
+        .alert-info {
+          background: var(--info-light);
+          border-color: var(--info-blue);
+          color: #0c5460;
+        }
+
+        .alert-close {
+          position: absolute;
+          top: var(--spacing-sm);
+          right: var(--spacing-md);
+          background: none;
+          border: none;
+          font-size: 1.2rem;
+          cursor: pointer;
+          opacity: 0.7;
+        }
+
+        .alert-close:hover {
+          opacity: 1;
+        }
+
+        /* =============================================================================
+           LOADING STATES
+           ============================================================================= */
+
+        .loading-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 61, 130, 0.1);
+          display: none;
+          align-items: center;
+          justify-content: center;
+          z-index: 999;
+          backdrop-filter: blur(2px);
+        }
+
+        .loading-overlay.active {
+          display: flex;
+        }
+
+        .loading-spinner {
+          width: 50px;
+          height: 50px;
+          border: 4px solid var(--gray-300);
+          border-top: 4px solid var(--psa-blue);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        .skeleton {
+          background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+          background-size: 200% 100%;
+          animation: skeleton-loading 1.5s infinite;
+        }
+
+        @keyframes skeleton-loading {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        /* =============================================================================
+           RESPONSIVE UTILITIES
+           ============================================================================= */
+
+        .d-none { display: none !important; }
+        .d-block { display: block !important; }
+        .d-flex { display: flex !important; }
+
+        @media (max-width: 768px) {
+          .d-md-none { display: none !important; }
+          .d-md-block { display: block !important; }
+        }
+
+        @media (max-width: 576px) {
+          .d-sm-none { display: none !important; }
+          .d-sm-block { display: block !important; }
+        }
+
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+
+        .mb-0 { margin-bottom: 0 !important; }
+        .mb-1 { margin-bottom: var(--spacing-xs) !important; }
+        .mb-2 { margin-bottom: var(--spacing-sm) !important; }
+        .mb-3 { margin-bottom: var(--spacing-md) !important; }
+        .mb-4 { margin-bottom: var(--spacing-lg) !important; }
+        .mb-5 { margin-bottom: var(--spacing-xl) !important; }
+
+        .mt-0 { margin-top: 0 !important; }
+        .mt-1 { margin-top: var(--spacing-xs) !important; }
+        .mt-2 { margin-top: var(--spacing-sm) !important; }
+        .mt-3 { margin-top: var(--spacing-md) !important; }
+        .mt-4 { margin-top: var(--spacing-lg) !important; }
+        .mt-5 { margin-top: var(--spacing-xl) !important; }
+
+        /* =============================================================================
+           NEW ORDER FORM - STYLES COMPLETS
+           ============================================================================= */
+
+        .new-order-section {
+          max-width: 900px;
+          margin: 0 auto;
+        }
+
+        .section-header {
+          text-align: center;
+          margin-bottom: var(--spacing-xxl);
+        }
+
+        .section-header h2 {
+          font-size: 2rem;
+          font-weight: 700;
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-sm);
+        }
+
+        .section-header p {
+          color: var(--gray-600);
+          font-size: 1.1rem;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+          margin-bottom: var(--spacing-xxl);
+        }
+
+        .progress-steps {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: var(--spacing-xl);
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          position: relative;
+        }
+
+        .step-number {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: var(--gray-300);
+          color: var(--gray-600);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 1.2rem;
+          margin-bottom: var(--spacing-sm);
+          transition: var(--transition-normal);
+        }
+
+        .step.active .step-number {
+          background: var(--psa-blue);
+          color: var(--white);
+        }
+
+        .step.completed .step-number {
+          background: var(--success-green);
+          color: var(--white);
+        }
+
+        .step-label {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--gray-500);
+        }
+
+        .step.active .step-label {
+          color: var(--psa-blue);
+        }
+
+        .progress-bar {
+          width: 100%;
+          height: 4px;
+          background: var(--gray-200);
+          border-radius: 2px;
+          overflow: hidden;
+        }
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, var(--psa-blue), var(--psa-blue-light));
+          width: 33.33%;
+          transition: var(--transition-normal);
+        }
+
+        /* Form Steps */
+        .order-form {
+          background: var(--white);
+          border-radius: 16px;
+          box-shadow: var(--shadow-lg);
+          overflow: hidden;
+        }
+
+        .form-step {
+          padding: var(--spacing-xxl);
+          min-height: 500px;
+        }
+
+        .step-content h3 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-sm);
+        }
+
+        .step-description {
+          color: var(--gray-600);
+          font-size: 1rem;
+          margin-bottom: var(--spacing-xl);
+        }
+
+        /* Service Cards */
+        .service-cards {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: var(--spacing-lg);
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .service-card {
+          background: var(--white);
+          border: 2px solid var(--gray-200);
+          border-radius: 12px;
+          padding: var(--spacing-lg);
+          cursor: pointer;
+          transition: var(--transition-normal);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .service-card:hover {
+          border-color: var(--psa-blue-light);
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md);
+        }
+
+        .service-card.selected {
+          border-color: var(--psa-blue);
+          background: linear-gradient(135deg, var(--psa-blue) 0%, var(--psa-blue-light) 100%);
+          color: var(--white);
+        }
+
+        .service-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: var(--spacing-md);
+        }
+
+        .service-header h4 {
+          font-size: 1.25rem;
+          font-weight: 700;
+          margin: 0;
+        }
+
+        .service-price {
+          font-size: 1.5rem;
+          font-weight: 900;
+          color: var(--psa-red);
+        }
+
+        .service-card.selected .service-price {
+          color: var(--psa-gold);
+        }
+
+        .service-features ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .service-features li {
+          padding: var(--spacing-xs) 0;
+          font-size: 0.95rem;
+          line-height: 1.4;
+        }
+
+        .service-badge {
+          position: absolute;
+          top: var(--spacing-md);
+          right: var(--spacing-md);
+          padding: var(--spacing-xs) var(--spacing-sm);
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .service-badge.recommended {
+          background: var(--success-green);
+          color: var(--white);
+        }
+
+        .service-badge.premium {
+          background: var(--psa-gold);
+          color: var(--psa-blue);
+        }
+
+        /* Card Search Section */
+        .card-search-section {
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .search-container {
+          position: relative;
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .search-input-wrapper {
+          position: relative;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+
+        .search-input {
+          width: 100%;
+          padding: var(--spacing-md) var(--spacing-xl) var(--spacing-md) 50px;
+          border: 2px solid var(--gray-300);
+          border-radius: 25px;
+          font-size: 1rem;
+          background: var(--white);
+          transition: var(--transition-normal);
+        }
+
+        .search-input:focus {
+          outline: none;
+          border-color: var(--psa-blue);
+          box-shadow: 0 0 0 3px rgba(0, 61, 130, 0.1);
+        }
+
+        .search-icon {
+          position: absolute;
+          left: var(--spacing-md);
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 1.2rem;
+          color: var(--gray-500);
+        }
+
+        .search-loading {
+          position: absolute;
+          right: var(--spacing-md);
+          top: 50%;
+          transform: translateY(-50%);
+        }
+
+        .spinner {
+          width: 20px;
+          height: 20px;
+          border: 2px solid var(--gray-300);
+          border-top: 2px solid var(--psa-blue);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        .search-results {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--white);
+          border: 1px solid var(--gray-300);
+          border-radius: 8px;
+          box-shadow: var(--shadow-lg);
+          max-height: 300px;
+          overflow-y: auto;
+          z-index: 10;
+          display: none;
+        }
+
+        .search-results.active {
+          display: block;
+        }
+
+        .search-result-item {
+          display: flex;
+          align-items: center;
+          padding: var(--spacing-md);
+          border-bottom: 1px solid var(--gray-100);
+          cursor: pointer;
+          transition: var(--transition-fast);
+        }
+
+        .search-result-item:hover {
+          background: var(--gray-50);
+        }
+
+        .search-result-item:last-child {
+          border-bottom: none;
+        }
+
+        .search-result-image {
+          width: 60px;
+          height: 84px;
+          object-fit: cover;
+          border-radius: 6px;
+          margin-right: var(--spacing-md);
+          background: var(--gray-100);
+        }
+
+        .search-result-info {
+          flex: 1;
+        }
+
+        .search-result-name {
+          font-weight: 600;
+          color: var(--gray-800);
+          margin-bottom: var(--spacing-xs);
+        }
+
+        .search-result-details {
+          font-size: 0.9rem;
+          color: var(--gray-600);
+        }
+
+        /* Manual Card Form */
+        .add-manual-section {
+          text-align: center;
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .btn-add-manual {
+          background: var(--gray-100);
+          border: 2px dashed var(--gray-300);
+          color: var(--gray-600);
+          padding: var(--spacing-md) var(--spacing-lg);
+          border-radius: 8px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition-normal);
+        }
+
+        .btn-add-manual:hover {
+          background: var(--psa-blue-light);
+          border-color: var(--psa-blue);
+          color: var(--white);
+        }
+
+        .manual-card-form {
+          background: var(--gray-50);
+          border: 1px solid var(--gray-200);
+          border-radius: 12px;
+          padding: var(--spacing-xl);
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .manual-card-form h4 {
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .manual-form-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: var(--spacing-md);
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .manual-form-grid .form-group.full-width {
+          grid-column: 1 / -1;
+        }
+
+        .manual-form-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: var(--spacing-md);
+        }
+
+        .btn-cancel {
+          background: var(--gray-400);
+          color: var(--white);
+          border: none;
+          padding: var(--spacing-sm) var(--spacing-lg);
+          border-radius: 6px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition-normal);
+        }
+
+        .btn-cancel:hover {
+          background: var(--gray-500);
+        }
+
+        .btn-add-card {
+          background: var(--psa-blue);
+          color: var(--white);
+          border: none;
+          padding: var(--spacing-sm) var(--spacing-lg);
+          border-radius: 6px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition-normal);
+        }
+
+        .btn-add-card:hover {
+          background: var(--psa-blue-dark);
+        }
+
+        /* Selected Cards Section */
+        .selected-cards-section {
+          border-top: 1px solid var(--gray-200);
+          padding-top: var(--spacing-xl);
+        }
+
+        .cards-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .cards-header h4 {
+          color: var(--psa-blue);
+          margin: 0;
+        }
+
+        .cards-summary {
+          display: flex;
+          gap: var(--spacing-md);
+          font-size: 0.9rem;
+          color: var(--gray-600);
+        }
+
+        .selected-cards-list {
+          min-height: 200px;
+        }
+
+        .empty-cards-state {
+          text-align: center;
+          padding: var(--spacing-xxl);
+          color: var(--gray-500);
+        }
+
+        .empty-icon {
+          font-size: 3rem;
+          margin-bottom: var(--spacing-md);
+        }
+
+        .card-item {
+          display: flex;
+          align-items: center;
+          background: var(--white);
+          border: 1px solid var(--gray-200);
+          border-radius: 8px;
+          padding: var(--spacing-md);
+          margin-bottom: var(--spacing-md);
+          transition: var(--transition-normal);
+        }
+
+        .card-item:hover {
+          box-shadow: var(--shadow-sm);
+        }
+
+        .card-item-image {
+          width: 50px;
+          height: 70px;
+          object-fit: cover;
+          border-radius: 4px;
+          margin-right: var(--spacing-md);
+          background: var(--gray-100);
+        }
+
+        .card-item-info {
+          flex: 1;
+        }
+
+        .card-item-name {
+          font-weight: 600;
+          color: var(--gray-800);
+          margin-bottom: var(--spacing-xs);
+        }
+
+        .card-item-details {
+          font-size: 0.9rem;
+          color: var(--gray-600);
+        }
+
+        .card-item-actions {
+          display: flex;
+          gap: var(--spacing-sm);
+        }
+
+        .btn-remove-card {
+          background: var(--danger-red);
+          color: var(--white);
+          border: none;
+          padding: var(--spacing-xs) var(--spacing-sm);
+          border-radius: 4px;
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: var(--transition-normal);
+        }
+
+        .btn-remove-card:hover {
+          background: #c82333;
+        }
+
+        /* Order Summary */
+        .order-summary {
+          background: var(--gray-50);
+          border: 1px solid var(--gray-200);
+          border-radius: 12px;
+          padding: var(--spacing-xl);
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .order-summary h4 {
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .summary-grid {
+          display: grid;
+          gap: var(--spacing-md);
+          margin-bottom: var(--spacing-lg);
+        }
+
+        .summary-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: var(--spacing-sm) 0;
+        }
+
+        .summary-item.total {
+          border-top: 2px solid var(--psa-blue);
+          padding-top: var(--spacing-md);
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: var(--psa-blue);
+        }
+
+        .summary-label {
+          color: var(--gray-600);
+        }
+
+        .summary-value {
+          font-weight: 600;
+          color: var(--gray-800);
+        }
+
+        .summary-cards {
+          max-height: 200px;
+          overflow-y: auto;
+          border-top: 1px solid var(--gray-300);
+          padding-top: var(--spacing-md);
+        }
+
+        .summary-card-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: var(--spacing-xs) 0;
+          font-size: 0.9rem;
+        }
+
+        /* Additional Info */
+        .additional-info {
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .additional-info h4 {
+          color: var(--psa-blue);
+          margin-bottom: var(--spacing-lg);
+        }
+
+        /* Terms Section */
+        .terms-section {
+          margin-bottom: var(--spacing-xl);
+        }
+
+        .checkbox-container {
+          display: flex;
+          align-items: flex-start;
+          cursor: pointer;
+          margin-bottom: var(--spacing-md);
+        }
+
+        .checkbox-container input[type="checkbox"] {
+          margin-right: var(--spacing-md);
+          margin-top: 2px;
+        }
+
+        /* Form Navigation */
+        .form-navigation {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: var(--spacing-xl);
+          background: var(--gray-50);
+          border-top: 1px solid var(--gray-200);
+        }
+
+        .nav-spacer {
+          flex: 1;
+        }
+
+        .btn-prev,
+        .btn-next,
+        .btn-submit {
+          padding: var(--spacing-md) var(--spacing-xl);
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition-normal);
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-sm);
+        }
+
+        .btn-prev {
+          background: var(--gray-400);
+          color: var(--white);
+        }
+
+        .btn-prev:hover {
+          background: var(--gray-500);
+        }
+
+        .btn-next {
+          background: var(--psa-blue);
+          color: var(--white);
+        }
+
+        .btn-next:hover {
+          background: var(--psa-blue-dark);
+        }
+
+        .btn-submit {
+          background: var(--success-green);
+          color: var(--white);
+          position: relative;
+        }
+
+        .btn-submit:hover {
+          background: #218838;
+        }
+
+        .btn-submit.loading .btn-text {
+          opacity: 0;
+        }
+
+        .btn-loader {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 20px;
+          height: 20px;
+          border: 2px solid rgba(255,255,255,0.3);
+          border-top: 2px solid white;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          opacity: 0;
+        }
+
+        .btn-submit.loading .btn-loader {
+          opacity: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .progress-steps {
+            gap: var(--spacing-md);
+          }
+          
+          .step-number {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+          }
+          
+          .service-cards {
+            grid-template-columns: 1fr;
+          }
+          
+          .manual-form-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .cards-header {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+          }
+          
+          .cards-summary {
+            flex-direction: column;
+            gap: var(--spacing-xs);
+          }
+          
+          .form-navigation {
+            flex-direction: column;
+            gap: var(--spacing-md);
+          }
+          
+          .nav-spacer {
+            display: none;
+          }
+          
+          .btn-prev,
+          .btn-next,
+          .btn-submit {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="client-header" id="clientHeader" style="display: none;">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-logo-section">
+                    <img src="shopify-psa-logo.png" alt="PSA Logo" class="psa-logo">
+                    <div class="header-text">
+                        <h1>Espace Client</h1>
+                        <p>Suivi de vos gradations PSA</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="user-info">
+                        <div class="user-name" id="userName">Client PSA</div>
+                        <div id="userEmail">client@example.com</div>
+                    </div>
+                    <button type="button" class="btn-logout" onclick="logout()">
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="client-main">
+        <div class="container">
+            <!-- Navigation Menu (hidden on auth views) -->
+            <nav class="nav-menu" id="navMenu" style="display: none;">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-view="dashboard" onclick="showView('dashboard')">
+                            📊 Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-view="newOrder" onclick="showView('newOrder')">
+                            ✨ Nouvelle Commande
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-view="orders" onclick="showView('orders')">
+                            📋 Mes commandes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-view="profile" onclick="showView('profile')">
+                            👤 Mon profil
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- LOGIN VIEW -->
+            <div id="loginView" class="view active">
+                <section class="auth-section">
+                    <div class="auth-card">
+                        <div class="auth-header">
+                            <img src="shopify-psa-logo.png" alt="PSA Logo" class="psa-logo" style="width: 60px; margin-bottom: 1rem;">
+                            <h2>Connexion</h2>
+                            <p>Accédez à votre espace client PSA</p>
+                        </div>
+                        <form class="auth-form" id="loginForm">
+                            <div class="form-group">
+                                <label class="form-label" for="loginEmail">Email</label>
+                                <input 
+                                    type="email" 
+                                    id="loginEmail" 
+                                    name="email" 
+                                    class="form-input" 
+                                    required 
+                                    autocomplete="email"
+                                    placeholder="votre@email.com"
+                                >
+                                <span class="form-error" id="loginEmailError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="loginPassword">Mot de passe</label>
+                                <input 
+                                    type="password" 
+                                    id="loginPassword" 
+                                    name="password" 
+                                    class="form-input" 
+                                    required 
+                                    autocomplete="current-password"
+                                    placeholder="Votre mot de passe"
+                                >
+                                <span class="form-error" id="loginPasswordError"></span>
+                            </div>
+                            <button type="submit" class="auth-submit-btn" id="loginBtn">
+                                <span class="btn-text">Se connecter</span>
+                                <div class="btn-loader"></div>
+                            </button>
+                            <div class="auth-switch">
+                                <p>Pas encore de compte ? 
+                                    <a href="#" onclick="showView('register')">Créer un compte</a>
+                                    | <a href="/signup"><strong>Inscription libre disponible</strong></a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+
+            <!-- REGISTER VIEW -->
+            <div id="registerView" class="view">
+                <section class="auth-section">
+                    <div class="auth-card">
+                        <div class="auth-header">
+                            <img src="shopify-psa-logo.png" alt="PSA Logo" class="psa-logo" style="width: 60px; margin-bottom: 1rem;">
+                            <h2>Créer un compte</h2>
+                            <p>Rejoignez l'espace client PSA</p>
+                        </div>
+                        <form class="auth-form" id="registerForm">
+                            <div class="form-group">
+                                <label class="form-label" for="registerFirstName">Prénom</label>
+                                <input 
+                                    type="text" 
+                                    id="registerFirstName" 
+                                    name="first_name" 
+                                    class="form-input" 
+                                    required 
+                                    autocomplete="given-name"
+                                    placeholder="Votre prénom"
+                                >
+                                <span class="form-error" id="registerFirstNameError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="registerLastName">Nom</label>
+                                <input 
+                                    type="text" 
+                                    id="registerLastName" 
+                                    name="last_name" 
+                                    class="form-input" 
+                                    required 
+                                    autocomplete="family-name"
+                                    placeholder="Votre nom"
+                                >
+                                <span class="form-error" id="registerLastNameError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="registerEmail">Email</label>
+                                <input 
+                                    type="email" 
+                                    id="registerEmail" 
+                                    name="email" 
+                                    class="form-input" 
+                                    required 
+                                    autocomplete="email"
+                                    placeholder="votre@email.com"
+                                >
+                                <span class="form-error" id="registerEmailError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="registerPhone">Téléphone (optionnel)</label>
+                                <input 
+                                    type="tel" 
+                                    id="registerPhone" 
+                                    name="phone" 
+                                    class="form-input" 
+                                    autocomplete="tel"
+                                    placeholder="+33 6 12 34 56 78"
+                                >
+                                <span class="form-error" id="registerPhoneError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="registerPassword">Mot de passe</label>
+                                <input 
+                                    type="password" 
+                                    id="registerPassword" 
+                                    name="password" 
+                                    class="form-input" 
+                                    required 
+                                    autocomplete="new-password"
+                                    placeholder="Minimum 8 caractères"
+                                >
+                                <span class="form-hint">Minimum 8 caractères, avec lettres et chiffres</span>
+                                <span class="form-error" id="registerPasswordError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="registerPasswordConfirm">Confirmer le mot de passe</label>
+                                <input 
+                                    type="password" 
+                                    id="registerPasswordConfirm" 
+                                    name="password_confirm" 
+                                    class="form-input" 
+                                    required 
+                                    autocomplete="new-password"
+                                    placeholder="Répétez votre mot de passe"
+                                >
+                                <span class="form-error" id="registerPasswordConfirmError"></span>
+                            </div>
+                            <!-- Hidden field for invitation token -->
+                            <input type="hidden" id="invitationToken" name="invitation_token" value="">
+                            
+                            <button type="submit" class="auth-submit-btn" id="registerBtn">
+                                <span class="btn-text">Créer mon compte</span>
+                                <div class="btn-loader"></div>
+                            </button>
+                            <div class="auth-switch">
+                                <p>Déjà un compte ? 
+                                    <a href="#" onclick="showView('login')">Se connecter</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+
+            <!-- NEW ORDER VIEW -->
+            <div id="newOrderView" class="view">
+                <section class="new-order-section">
+                    <!-- Header -->
+                    <div class="section-header">
+                        <h2>Nouvelle commande de gradation PSA</h2>
+                        <p>Sélectionnez votre service et ajoutez vos cartes Pokémon</p>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-steps">
+                            <div class="step active" id="step1Indicator">
+                                <div class="step-number">1</div>
+                                <div class="step-label">Service</div>
+                            </div>
+                            <div class="step" id="step2Indicator">
+                                <div class="step-number">2</div>
+                                <div class="step-label">Cartes</div>
+                            </div>
+                            <div class="step" id="step3Indicator">
+                                <div class="step-number">3</div>
+                                <div class="step-label">Validation</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Order Form -->
+                    <form id="newOrderForm" class="order-form">
+                        <!-- ÉTAPE 1: Sélection du service PSA -->
+                        <div class="form-step" id="formStep1">
+                            <div class="step-content">
+                                <h3>Choisissez votre service de gradation</h3>
+                                <p class="step-description">
+                                    Sélectionnez le service PSA qui correspond le mieux à vos besoins et votre budget.
+                                </p>
+                                
+                                <div class="service-cards">
+                                    <div class="service-card" data-service="value" data-price="27">
+                                        <div class="service-header">
+                                            <h4>PSA Value</h4>
+                                            <div class="service-price">27€</div>
+                                        </div>
+                                        <div class="service-features">
+                                            <ul>
+                                                <li>✅ Gradation standard PSA</li>
+                                                <li>⏱️ 15-30 jours ouvrés</li>
+                                                <li>💰 Meilleur rapport qualité/prix</li>
+                                                <li>📋 Valeur estimée < 499$</li>
+                                            </ul>
+                                        </div>
+                                        <div class="service-badge recommended">Recommandé</div>
+                                    </div>
+                                    
+                                    <div class="service-card" data-service="regular" data-price="35">
+                                        <div class="service-header">
+                                            <h4>PSA Regular</h4>
+                                            <div class="service-price">35€</div>
+                                        </div>
+                                        <div class="service-features">
+                                            <ul>
+                                                <li>✅ Gradation standard PSA</li>
+                                                <li>⏱️ 10-20 jours ouvrés</li>
+                                                <li>🚀 Traitement plus rapide</li>
+                                                <li>📋 Valeur estimée < 999$</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="service-card" data-service="express" data-price="50">
+                                        <div class="service-header">
+                                            <h4>PSA Express</h4>
+                                            <div class="service-price">50€</div>
+                                        </div>
+                                        <div class="service-features">
+                                            <ul>
+                                                <li>✅ Gradation premium PSA</li>
+                                                <li>⚡ 5-10 jours ouvrés</li>
+                                                <li>🏆 Service prioritaire</li>
+                                                <li>📋 Valeur estimée < 1499$</li>
+                                            </ul>
+                                        </div>
+                                        <div class="service-badge premium">Premium</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-error" id="serviceError"></div>
+                            </div>
+                        </div>
+
+                        <!-- ÉTAPE 2: Ajout des cartes -->
+                        <div class="form-step" id="formStep2" style="display: none;">
+                            <div class="step-content">
+                                <h3>Ajoutez vos cartes Pokémon</h3>
+                                <p class="step-description">
+                                    Recherchez vos cartes dans notre base TaskMaster ou ajoutez-les manuellement.
+                                    <strong>Maximum 20 cartes par commande.</strong>
+                                </p>
+                                
+                                <!-- Search Section -->
+                                <div class="card-search-section">
+                                    <div class="search-container">
+                                        <div class="search-input-wrapper">
+                                            <input 
+                                                type="text" 
+                                                id="cardSearchInput" 
+                                                class="search-input"
+                                                placeholder="Rechercher une carte (ex: Charizard, Pikachu V...)..."
+                                                autocomplete="off"
+                                            >
+                                            <div class="search-icon">🔍</div>
+                                            <div class="search-loading" id="searchLoading" style="display: none;">
+                                                <div class="spinner"></div>
+                                            </div>
+                                        </div>
+                                        <div class="search-results" id="searchResults"></div>
+                                    </div>
+                                    
+                                    <div class="add-manual-section">
+                                        <button type="button" class="btn-add-manual" onclick="showManualCardForm()">
+                                            ➕ Ajouter une carte manuellement
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Manual Card Form -->
+                                <div class="manual-card-form" id="manualCardForm" style="display: none;">
+                                    <h4>Ajouter une carte manuellement</h4>
+                                    <div class="manual-form-grid">
+                                        <div class="form-group">
+                                            <label class="form-label">Nom de la carte *</label>
+                                            <input type="text" id="manualCardName" class="form-input" placeholder="Ex: Charizard V">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Série</label>
+                                            <input type="text" id="manualCardSeries" class="form-input" placeholder="Ex: Champion's Path">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Numéro</label>
+                                            <input type="text" id="manualCardNumber" class="form-input" placeholder="Ex: 074/073">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Rareté</label>
+                                            <select id="manualCardRarity" class="form-select">
+                                                <option value="">Sélectionner...</option>
+                                                <option value="Common">Common</option>
+                                                <option value="Uncommon">Uncommon</option>
+                                                <option value="Rare">Rare</option>
+                                                <option value="Double Rare">Double Rare</option>
+                                                <option value="Ultra Rare">Ultra Rare</option>
+                                                <option value="Secret Rare">Secret Rare</option>
+                                                <option value="Rainbow Rare">Rainbow Rare</option>
+                                                <option value="Gold Rare">Gold Rare</option>
+                                                <option value="Full Art">Full Art</option>
+                                                <option value="Alt Art">Alt Art</option>
+                                                <option value="VMAX">VMAX</option>
+                                                <option value="VSTAR">VSTAR</option>
+                                                <option value="GX">GX</option>
+                                                <option value="EX">EX</option>
+                                                <option value="Promo">Promo</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Année</label>
+                                            <input type="number" id="manualCardYear" class="form-input" placeholder="Ex: 2023" min="1995" max="2025">
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label class="form-label">Notes (optionnel)</label>
+                                            <textarea id="manualCardNotes" class="form-textarea" rows="2" placeholder="Informations supplémentaires sur la carte..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="manual-form-actions">
+                                        <button type="button" class="btn-cancel" onclick="hideManualCardForm()">Annuler</button>
+                                        <button type="button" class="btn-add-card" onclick="addManualCard()">Ajouter la carte</button>
+                                    </div>
+                                </div>
+
+                                <!-- Selected Cards List -->
+                                <div class="selected-cards-section">
+                                    <div class="cards-header">
+                                        <h4>Cartes sélectionnées (<span id="cardCount">0</span>/20)</h4>
+                                        <div class="cards-summary">
+                                            <span id="selectedService">Service: Non sélectionné</span>
+                                            <span id="totalPrice">Total: 0€</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="selected-cards-list" id="selectedCardsList">
+                                        <div class="empty-cards-state">
+                                            <div class="empty-icon">📝</div>
+                                            <p>Aucune carte sélectionnée</p>
+                                            <small>Utilisez la recherche ou ajoutez une carte manuellement</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-error" id="cardsError"></div>
+                            </div>
+                        </div>
+
+                        <!-- ÉTAPE 3: Informations supplémentaires et validation -->
+                        <div class="form-step" id="formStep3" style="display: none;">
+                            <div class="step-content">
+                                <h3>Informations de commande</h3>
+                                <p class="step-description">
+                                    Vérifiez votre commande et ajoutez des informations supplémentaires si nécessaire.
+                                </p>
+                                
+                                <!-- Order Summary -->
+                                <div class="order-summary">
+                                    <h4>Récapitulatif de votre commande</h4>
+                                    <div class="summary-grid">
+                                        <div class="summary-item">
+                                            <span class="summary-label">Service sélectionné:</span>
+                                            <span class="summary-value" id="summaryService">-</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Nombre de cartes:</span>
+                                            <span class="summary-value" id="summaryCardCount">0</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Prix unitaire:</span>
+                                            <span class="summary-value" id="summaryUnitPrice">0€</span>
+                                        </div>
+                                        <div class="summary-item total">
+                                            <span class="summary-label">Prix total:</span>
+                                            <span class="summary-value" id="summaryTotalPrice">0€</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="summary-cards" id="summaryCardsList">
+                                        <!-- Populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Additional Information -->
+                                <div class="additional-info">
+                                    <h4>Informations supplémentaires (optionnel)</h4>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label" for="orderComments">Commentaires ou instructions spéciales</label>
+                                        <textarea 
+                                            id="orderComments" 
+                                            name="comments"
+                                            class="form-textarea" 
+                                            rows="3"
+                                            placeholder="Ajoutez des informations sur vos cartes, conditions spéciales, ou toute autre instruction..."
+                                        ></textarea>
+                                        <span class="form-hint">Ces informations nous aideront à mieux traiter votre commande</span>
+                                    </div>
+                                </div>
+
+                                <!-- Terms and Conditions -->
+                                <div class="terms-section">
+                                    <div class="form-group">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" id="acceptTerms" name="accept_terms">
+                                            <span class="checkmark"></span>
+                                            J'accepte les <a href="#" target="_blank">conditions générales</a> et les <a href="#" target="_blank">tarifs PSA</a>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" id="acceptGradingRisks" name="accept_risks">
+                                            <span class="checkmark"></span>
+                                            Je comprends que la gradation peut endommager mes cartes et j'accepte les risques
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-error" id="validationError"></div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="form-navigation">
+                            <button type="button" class="btn-prev" id="prevBtn" onclick="previousStep()" style="display: none;">
+                                ← Retour
+                            </button>
+                            
+                            <div class="nav-spacer"></div>
+                            
+                            <button type="button" class="btn-next" id="nextBtn" onclick="nextStep()">
+                                Continuer →
+                            </button>
+                            
+                            <button type="submit" class="btn-submit" id="submitBtn" style="display: none;">
+                                <span class="btn-text">Valider ma commande</span>
+                                <div class="btn-loader"></div>
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <!-- DASHBOARD VIEW -->
+            <div id="dashboardView" class="view">
+                <section class="dashboard-section">
+                    <!-- Welcome Banner -->
+                    <div class="welcome-banner">
+                        <div class="welcome-content">
+                            <div class="welcome-text">
+                                <h2>Bienvenue dans votre espace PSA</h2>
+                                <p>Suivez l'état de vos gradations en temps réel</p>
+                            </div>
+                            <div class="welcome-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number" id="dashTotalOrders">0</div>
+                                    <div class="stat-label">Commandes</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number" id="dashPendingOrders">0</div>
+                                    <div class="stat-label">En cours</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number" id="dashCompletedOrders">0</div>
+                                    <div class="stat-label">Terminées</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div class="stat-card-title">Total commandes</div>
+                            </div>
+                            <div class="stat-card-value" id="statTotalOrders">0</div>
+                            <div class="stat-card-label">Toutes vos gradations PSA</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-card-header">
+                                <div class="stat-card-title">En attente</div>
+                            </div>
+                            <div class="stat-card-value" id="statPendingOrders">0</div>
+                            <div class="stat-card-label">Commandes en cours de traitement</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-card-header">
+                                <div class="stat-card-title">Terminées</div>
+                            </div>
+                            <div class="stat-card-value" id="statCompletedOrders">0</div>
+                            <div class="stat-card-label">Gradations finalisées</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div class="stat-card-title">Valeur totale</div>
+                            </div>
+                            <div class="stat-card-value" id="statTotalValue">0€</div>
+                            <div class="stat-card-label">Investissement gradations</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="orders-section">
+                        <div class="orders-header">
+                            <h3 class="orders-title">Commandes récentes</h3>
+                            <a href="#" class="btn-new-order" onclick="showView('orders')">
+                                Voir toutes les commandes
+                            </a>
+                        </div>
+                        <div class="orders-table-container">
+                            <table class="orders-table" id="recentOrdersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID Commande</th>
+                                        <th>Carte</th>
+                                        <th>Statut</th>
+                                        <th>Date</th>
+                                        <th>Prix</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentOrdersBody">
+                                    <!-- Populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ORDERS VIEW -->
+            <div id="ordersView" class="view">
+                <section class="orders-section">
+                    <div class="orders-header">
+                        <h3 class="orders-title">Toutes mes commandes</h3>
+                        <a href="/" class="btn-new-order">
+                            Nouvelle commande
+                        </a>
+                    </div>
+                    <div class="orders-table-container">
+                        <table class="orders-table" id="allOrdersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID Commande</th>
+                                    <th>Carte</th>
+                                    <th>Service</th>
+                                    <th>Statut</th>
+                                    <th>Date</th>
+                                    <th>Prix</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allOrdersBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div class="empty-state" id="ordersEmptyState" style="display: none;">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>Aucune commande</h3>
+                        <p>Vous n'avez pas encore passé de commande de gradation PSA.</p>
+                        <a href="/" class="btn-new-order">
+                            Créer ma première commande
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PROFILE VIEW -->
+            <div id="profileView" class="view">
+                <section class="dashboard-section">
+                    <div class="welcome-banner">
+                        <div class="welcome-content">
+                            <div class="welcome-text">
+                                <h2>Mon profil</h2>
+                                <p>Gérez vos informations personnelles</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="orders-section">
+                        <div class="orders-header">
+                            <h3 class="orders-title">Informations personnelles</h3>
+                        </div>
+                        <div style="padding: 2rem;">
+                            <div class="stats-grid" style="grid-template-columns: 1fr; max-width: 600px;">
+                                <div class="detail-group">
+                                    <div class="detail-label">Nom complet</div>
+                                    <div class="detail-value" id="profileFullName">-</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Adresse email</div>
+                                    <div class="detail-value" id="profileEmail">-</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Téléphone</div>
+                                    <div class="detail-value" id="profilePhone">Non renseigné</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Membre depuis</div>
+                                    <div class="detail-value" id="profileMemberSince">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Détails de la commande</h3>
+                <button type="button" class="modal-close" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="orderModalBody">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================================
+        // PSA CLIENT DASHBOARD - JAVASCRIPT COMPLET
+        // =============================================================================
+
+        console.log('[PSA CLIENT] 🚀 Initializing client dashboard...');
+
+        // Configuration
+        const CONFIG = {
+            API_BASE: '/api/client',
+            TOKEN_KEY: 'psa_client_token',
+            USER_KEY: 'psa_client_user',
+            VIEWS: ['login', 'register', 'dashboard', 'orders', 'profile']
+        };
+
+        // État global de l'application
+        const APP_STATE = {
+            currentUser: null,
+            currentView: 'login',
+            orders: [],
+            isAuthenticated: false,
+            isLoading: false
+        };
+
+        // =============================================================================
+        // UTILITIES
+        // =============================================================================
+
+        // Utility functions
+        function showLoading(show = true) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active', show);
+            }
+            APP_STATE.isLoading = show;
+        }
+
+        function showAlert(message, type = 'info', autoHide = true) {
+            const container = document.getElementById('alertContainer');
+            if (!container) return;
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="alert-close">&times;</button>
+            `;
+
+            container.appendChild(alertDiv);
+
+            // Auto-hide after 5 seconds
+            if (autoHide) {
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.parentNode.removeChild(alertDiv);
+                    }
+                }, 5000);
+            }
+
+            // Close button
+            alertDiv.querySelector('.alert-close').addEventListener('click', () => {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            });
+        }
+
+        function clearAlerts() {
+            const container = document.getElementById('alertContainer');
+            if (container) {
+                container.innerHTML = '';
+            }
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(amount || 0);
+        }
+
+        // =============================================================================
+        // API CALLS
+        // =============================================================================
+
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const url = `${CONFIG.API_BASE}${endpoint}`;
+                const defaultOptions = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                };
+
+                const response = await fetch(url, { ...defaultOptions, ...options });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || `HTTP ${response.status}`);
+                }
+
+                return data;
+            } catch (error) {
+                console.error('[PSA API] Error:', error);
+                throw error;
+            }
+        }
+
+        // =============================================================================
+        // AUTHENTICATION
+        // =============================================================================
+
+        async function login(email, password) {
+            showLoading(true);
+            clearAlerts();
+
+            try {
+                const data = await apiCall('/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (data.success) {
+                    APP_STATE.currentUser = data.customer;
+                    APP_STATE.isAuthenticated = true;
+                    
+                    // Store user info
+                    localStorage.setItem(CONFIG.USER_KEY, JSON.stringify(data.customer));
+                    
+                    updateUserDisplay();
+                    showView('dashboard');
+                    showAlert('Connexion réussie !', 'success');
+                    
+                    // Load dashboard data
+                    await loadDashboardData();
+                } else {
+                    throw new Error(data.message || 'Erreur de connexion');
+                }
+            } catch (error) {
+                console.error('[PSA AUTH] Login error:', error);
+                showAlert(error.message || 'Erreur de connexion', 'danger');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function register(formData) {
+            showLoading(true);
+            clearAlerts();
+
+            try {
+                const data = await apiCall('/register', {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+
+                if (data.success) {
+                    APP_STATE.currentUser = data.customer;
+                    APP_STATE.isAuthenticated = true;
+                    
+                    // Store user info
+                    localStorage.setItem(CONFIG.USER_KEY, JSON.stringify(data.customer));
+                    
+                    updateUserDisplay();
+                    showView('dashboard');
+                    
+                    let message = 'Compte créé avec succès !';
+                    if (data.has_linked_order) {
+                        message += ' Votre commande a été automatiquement liée à votre compte.';
+                    }
+                    showAlert(message, 'success');
+                    
+                    // Load dashboard data
+                    await loadDashboardData();
+                } else {
+                    throw new Error(data.message || 'Erreur lors de la création du compte');
+                }
+            } catch (error) {
+                console.error('[PSA AUTH] Register error:', error);
+                showAlert(error.message || 'Erreur lors de la création du compte', 'danger');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function logout() {
+            try {
+                await apiCall('/logout', { method: 'POST' });
+            } catch (error) {
+                console.error('[PSA AUTH] Logout error:', error);
+            }
+
+            // Clear local state
+            APP_STATE.currentUser = null;
+            APP_STATE.isAuthenticated = false;
+            APP_STATE.orders = [];
+            
+            localStorage.removeItem(CONFIG.USER_KEY);
+            
+            showView('login');
+            showAlert('Déconnexion réussie', 'info');
+        }
+
+        async function checkAuthStatus() {
+            try {
+                const data = await apiCall('/me');
+                
+                if (data.success && data.customer) {
+                    APP_STATE.currentUser = data.customer;
+                    APP_STATE.isAuthenticated = true;
+                    
+                    localStorage.setItem(CONFIG.USER_KEY, JSON.stringify(data.customer));
+                    updateUserDisplay();
+                    
+                    return true;
+                }
+            } catch (error) {
+                console.error('[PSA AUTH] Auth check failed:', error);
+            }
+            
+            return false;
+        }
+
+        function updateUserDisplay() {
+            const user = APP_STATE.currentUser;
+            if (!user) return;
+
+            // Update header
+            const userName = document.getElementById('userName');
+            const userEmail = document.getElementById('userEmail');
+            
+            if (userName) {
+                userName.textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Client PSA';
+            }
+            if (userEmail) {
+                userEmail.textContent = user.email || '';
+            }
+
+            // Update profile view
+            const profileFullName = document.getElementById('profileFullName');
+            const profileEmail = document.getElementById('profileEmail');
+            const profilePhone = document.getElementById('profilePhone');
+            const profileMemberSince = document.getElementById('profileMemberSince');
+
+            if (profileFullName) {
+                profileFullName.textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Non renseigné';
+            }
+            if (profileEmail) {
+                profileEmail.textContent = user.email || 'Non renseigné';
+            }
+            if (profilePhone) {
+                profilePhone.textContent = user.phone || 'Non renseigné';
+            }
+            if (profileMemberSince) {
+                profileMemberSince.textContent = user.created_at ? formatDate(user.created_at) : 'Non disponible';
+            }
+        }
+
+        // =============================================================================
+        // VIEWS MANAGEMENT
+        // =============================================================================
+
+        function showView(viewName) {
+            console.log(`[PSA VIEW] Switching to: ${viewName}`);
+            
+            // Hide all views
+            CONFIG.VIEWS.forEach(view => {
+                const element = document.getElementById(`${view}View`);
+                if (element) {
+                    element.classList.remove('active');
+                }
+            });
+
+            // Show target view
+            const targetView = document.getElementById(`${viewName}View`);
+            if (targetView) {
+                targetView.classList.add('active');
+                APP_STATE.currentView = viewName;
+            }
+
+            // Update navigation
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.view === viewName) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Show/hide header and navigation based on view
+            const clientHeader = document.getElementById('clientHeader');
+            const navMenu = document.getElementById('navMenu');
+            
+            const isAuthView = viewName === 'login' || viewName === 'register';
+            
+            if (clientHeader) {
+                clientHeader.style.display = isAuthView ? 'none' : 'block';
+            }
+            if (navMenu) {
+                navMenu.style.display = isAuthView ? 'none' : 'block';
+            }
+
+            // Load view-specific data
+            if (viewName === 'orders') {
+                loadAllOrders();
+            }
+
+            // Clear alerts when switching views
+            clearAlerts();
+        }
+
+        // =============================================================================
+        // ORDERS MANAGEMENT
+        // =============================================================================
+
+        async function loadOrders() {
+            try {
+                const data = await apiCall('/orders');
+                
+                if (data.success) {
+                    APP_STATE.orders = data.orders || [];
+                    return APP_STATE.orders;
+                }
+            } catch (error) {
+                console.error('[PSA ORDERS] Failed to load orders:', error);
+                showAlert('Erreur lors du chargement des commandes', 'warning');
+            }
+            
+            return [];
+        }
+
+        async function loadDashboardData() {
+            try {
+                const orders = await loadOrders();
+                updateDashboardStats(orders);
+                updateRecentOrdersTable(orders.slice(0, 5)); // Show 5 most recent
+            } catch (error) {
+                console.error('[PSA DASHBOARD] Failed to load data:', error);
+            }
+        }
+
+        async function loadAllOrders() {
+            showLoading(true);
+            try {
+                const orders = await loadOrders();
+                updateAllOrdersTable(orders);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function updateDashboardStats(orders) {
+            const total = orders.length;
+            const pending = orders.filter(o => o.status === 'pending' || o.status === 'in_progress').length;
+            const completed = orders.filter(o => o.status === 'completed').length;
+            const totalValue = orders.reduce((sum, o) => sum + (parseFloat(o.price) || 0), 0);
+
+            // Welcome banner stats
+            const dashTotal = document.getElementById('dashTotalOrders');
+            const dashPending = document.getElementById('dashPendingOrders');
+            const dashCompleted = document.getElementById('dashCompletedOrders');
+
+            if (dashTotal) dashTotal.textContent = total;
+            if (dashPending) dashPending.textContent = pending;
+            if (dashCompleted) dashCompleted.textContent = completed;
+
+            // Stats grid
+            const statTotal = document.getElementById('statTotalOrders');
+            const statPending = document.getElementById('statPendingOrders');
+            const statCompleted = document.getElementById('statCompletedOrders');
+            const statValue = document.getElementById('statTotalValue');
+
+            if (statTotal) statTotal.textContent = total;
+            if (statPending) statPending.textContent = pending;
+            if (statCompleted) statCompleted.textContent = completed;
+            if (statValue) statValue.textContent = formatCurrency(totalValue);
+        }
+
+        function updateRecentOrdersTable(orders) {
+            const tbody = document.getElementById('recentOrdersBody');
+            if (!tbody) return;
+
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center" style="padding: 2rem; color: #6c757d;">
+                            <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">📋</div>
+                            Aucune commande récente
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td>
+                        <span class="order-id">${order.submission_id || order.id}</span>
+                    </td>
+                    <td>${order.card_name || 'Non spécifié'}</td>
+                    <td>
+                        <span class="order-status ${order.status}">${getStatusLabel(order.status)}</span>
+                    </td>
+                    <td>${formatDate(order.created_at)}</td>
+                    <td>${formatCurrency(order.price)}</td>
+                    <td>
+                        <div class="order-actions">
+                            <button class="btn-action btn-view" onclick="showOrderDetails('${order.id}')">
+                                Voir
+                            </button>
+                            ${order.video_url ? `
+                                <button class="btn-action btn-video" onclick="watchOrderVideo('${order.submission_id}')">
+                                    Vidéo
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateAllOrdersTable(orders) {
+            const tbody = document.getElementById('allOrdersBody');
+            const emptyState = document.getElementById('ordersEmptyState');
+            
+            if (!tbody) return;
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '';
+                if (emptyState) emptyState.style.display = 'block';
+                return;
+            }
+
+            if (emptyState) emptyState.style.display = 'none';
+
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td>
+                        <span class="order-id">${order.submission_id || order.id}</span>
+                    </td>
+                    <td>${order.card_name || 'Non spécifié'}</td>
+                    <td>${order.grading_service || 'PSA Standard'}</td>
+                    <td>
+                        <span class="order-status ${order.status}">${getStatusLabel(order.status)}</span>
+                    </td>
+                    <td>${formatDate(order.created_at)}</td>
+                    <td>${formatCurrency(order.price)}</td>
+                    <td>
+                        <div class="order-actions">
+                            <button class="btn-action btn-view" onclick="showOrderDetails('${order.id}')">
+                                Voir
+                            </button>
+                            ${order.video_url ? `
+                                <button class="btn-action btn-video" onclick="watchOrderVideo('${order.submission_id}')">
+                                    Vidéo
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'pending': 'En attente',
+                'in_progress': 'En cours',
+                'completed': 'Terminé',
+                'cancelled': 'Annulé'
+            };
+            return labels[status] || status;
+        }
+
+        async function showOrderDetails(orderId) {
+            try {
+                showLoading(true);
+                
+                const data = await apiCall(`/orders/${orderId}`);
+                
+                if (data.success && data.order) {
+                    displayOrderModal(data.order);
+                } else {
+                    showAlert('Commande non trouvée', 'danger');
+                }
+            } catch (error) {
+                console.error('[PSA ORDER] Failed to load order details:', error);
+                showAlert('Erreur lors du chargement des détails', 'danger');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayOrderModal(order) {
+            const modal = document.getElementById('orderModal');
+            const modalBody = document.getElementById('orderModalBody');
+            
+            if (!modal || !modalBody) return;
+
+            modalBody.innerHTML = `
+                <div class="detail-group">
+                    <div class="detail-label">Numéro de commande</div>
+                    <div class="detail-value">${order.submission_id || order.id}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Carte</div>
+                    <div class="detail-value">${order.card_name || 'Non spécifié'}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Service de gradation</div>
+                    <div class="detail-value">${order.grading_service || 'PSA Standard'}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Statut</div>
+                    <div class="detail-value">
+                        <span class="order-status ${order.status}">${getStatusLabel(order.status)}</span>
+                    </div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Date de commande</div>
+                    <div class="detail-value">${formatDate(order.created_at)}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Prix</div>
+                    <div class="detail-value">${formatCurrency(order.price)}</div>
+                </div>
+                ${order.customer_email ? `
+                    <div class="detail-group">
+                        <div class="detail-label">Email de contact</div>
+                        <div class="detail-value">${order.customer_email}</div>
+                    </div>
+                ` : ''}
+                ${order.notes ? `
+                    <div class="detail-group">
+                        <div class="detail-label">Notes</div>
+                        <div class="detail-value">${order.notes}</div>
+                    </div>
+                ` : ''}
+                ${order.video_url ? `
+                    <div class="detail-group">
+                        <div class="detail-label">Preuve vidéo</div>
+                        <div class="detail-value">
+                            <button class="btn-action btn-video" onclick="watchOrderVideo('${order.submission_id}')">
+                                Regarder la vidéo de preuve
+                            </button>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeOrderModal() {
+            const modal = document.getElementById('orderModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function watchOrderVideo(submissionId) {
+            // This would typically open the video in a new window or modal
+            // For now, we'll redirect to the video access page
+            window.open(`/video-proof-client.html?submission=${submissionId}`, '_blank');
+        }
+
+        // =============================================================================
+        // FORM HANDLING
+        // =============================================================================
+
+        function validatePassword(password) {
+            const errors = [];
+            
+            if (password.length < 8) {
+                errors.push('Au moins 8 caractères');
+            }
+            if (!/[a-zA-Z]/.test(password)) {
+                errors.push('Au moins une lettre');
+            }
+            if (!/\d/.test(password)) {
+                errors.push('Au moins un chiffre');
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors: errors
+            };
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function clearFormErrors(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+            
+            const errorElements = form.querySelectorAll('.form-error');
+            errorElements.forEach(el => el.textContent = '');
+            
+            const inputElements = form.querySelectorAll('.form-input');
+            inputElements.forEach(el => el.classList.remove('error'));
+        }
+
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + 'Error');
+            
+            if (field) {
+                field.classList.add('error');
+            }
+            if (errorElement) {
+                errorElement.textContent = message;
+            }
+        }
+
+        // =============================================================================
+        // EVENT LISTENERS
+        // =============================================================================
+
+        function setupEventListeners() {
+            // Login form
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const btn = document.getElementById('loginBtn');
+                    if (btn.disabled) return;
+                    
+                    btn.disabled = true;
+                    btn.classList.add('loading');
+                    
+                    clearFormErrors('loginForm');
+                    
+                    const formData = new FormData(loginForm);
+                    const email = formData.get('email');
+                    const password = formData.get('password');
+                    
+                    // Basic validation
+                    let hasErrors = false;
+                    
+                    if (!email || !validateEmail(email)) {
+                        showFieldError('loginEmail', 'Email valide requis');
+                        hasErrors = true;
+                    }
+                    
+                    if (!password) {
+                        showFieldError('loginPassword', 'Mot de passe requis');
+                        hasErrors = true;
+                    }
+                    
+                    if (hasErrors) {
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                        return;
+                    }
+                    
+                    try {
+                        await login(email, password);
+                    } finally {
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                    }
+                });
+            }
+
+            // Register form
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const btn = document.getElementById('registerBtn');
+                    if (btn.disabled) return;
+                    
+                    btn.disabled = true;
+                    btn.classList.add('loading');
+                    
+                    clearFormErrors('registerForm');
+                    
+                    const formData = new FormData(registerForm);
+                    const firstName = formData.get('first_name');
+                    const lastName = formData.get('last_name');
+                    const email = formData.get('email');
+                    const phone = formData.get('phone');
+                    const password = formData.get('password');
+                    const passwordConfirm = formData.get('password_confirm');
+                    const invitationToken = formData.get('invitation_token');
+                    
+                    // Validation
+                    let hasErrors = false;
+                    
+                    if (!firstName?.trim()) {
+                        showFieldError('registerFirstName', 'Prénom requis');
+                        hasErrors = true;
+                    }
+                    
+                    if (!lastName?.trim()) {
+                        showFieldError('registerLastName', 'Nom requis');
+                        hasErrors = true;
+                    }
+                    
+                    if (!email || !validateEmail(email)) {
+                        showFieldError('registerEmail', 'Email valide requis');
+                        hasErrors = true;
+                    }
+                    
+                    const passwordValidation = validatePassword(password);
+                    if (!passwordValidation.isValid) {
+                        showFieldError('registerPassword', passwordValidation.errors.join(', '));
+                        hasErrors = true;
+                    }
+                    
+                    if (password !== passwordConfirm) {
+                        showFieldError('registerPasswordConfirm', 'Les mots de passe ne correspondent pas');
+                        hasErrors = true;
+                    }
+                    
+                    if (hasErrors) {
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                        return;
+                    }
+                    
+                    try {
+                        await register({
+                            first_name: firstName.trim(),
+                            last_name: lastName.trim(),
+                            email: email.trim(),
+                            phone: phone?.trim() || null,
+                            password: password,
+                            invitation_token: invitationToken || null
+                        });
+                    } finally {
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                    }
+                });
+
+                // Real-time password validation
+                const passwordField = document.getElementById('registerPassword');
+                if (passwordField) {
+                    passwordField.addEventListener('input', (e) => {
+                        const validation = validatePassword(e.target.value);
+                        const errorElement = document.getElementById('registerPasswordError');
+                        
+                        if (e.target.value && !validation.isValid) {
+                            errorElement.textContent = validation.errors.join(', ');
+                            e.target.classList.add('error');
+                        } else {
+                            errorElement.textContent = '';
+                            e.target.classList.remove('error');
+                        }
+                    });
+                }
+
+                // Real-time password confirmation validation
+                const passwordConfirmField = document.getElementById('registerPasswordConfirm');
+                if (passwordConfirmField) {
+                    passwordConfirmField.addEventListener('input', (e) => {
+                        const password = document.getElementById('registerPassword').value;
+                        const errorElement = document.getElementById('registerPasswordConfirmError');
+                        
+                        if (e.target.value && e.target.value !== password) {
+                            errorElement.textContent = 'Les mots de passe ne correspondent pas';
+                            e.target.classList.add('error');
+                        } else {
+                            errorElement.textContent = '';
+                            e.target.classList.remove('error');
+                        }
+                    });
+                }
+            }
+
+            // Modal click outside to close
+            const orderModal = document.getElementById('orderModal');
+            if (orderModal) {
+                orderModal.addEventListener('click', (e) => {
+                    if (e.target === orderModal) {
+                        closeOrderModal();
+                    }
+                });
+            }
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeOrderModal();
+                }
+            });
+        }
+
+        // =============================================================================
+        // INVITATION TOKEN HANDLING
+        // =============================================================================
+
+        function checkForInvitationToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token') || urlParams.get('invitation');
+            
+            if (token) {
+                console.log('[PSA INVITATION] Token found in URL:', token);
+                
+                // Store token for registration
+                const invitationField = document.getElementById('invitationToken');
+                if (invitationField) {
+                    invitationField.value = token;
+                }
+                
+                // Switch to register view
+                showView('register');
+                showAlert('Invitation détectée ! Créez votre compte pour accéder à votre commande.', 'info');
+                
+                // Clean URL
+                const cleanUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+        }
+
+        // =============================================================================
+        // INITIALIZATION
+        // =============================================================================
+
+        async function initializeApp() {
+            console.log('[PSA CLIENT] 🏁 Starting initialization...');
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Check for invitation token in URL
+            checkForInvitationToken();
+            
+            // Check if user is already authenticated
+            const isAuthenticated = await checkAuthStatus();
+            
+            if (isAuthenticated) {
+                console.log('[PSA CLIENT] ✅ User already authenticated');
+                showView('dashboard');
+                await loadDashboardData();
+            } else {
+                console.log('[PSA CLIENT] 🔑 No authentication found, showing login');
+                showView('login');
+            }
+            
+            console.log('[PSA CLIENT] ✅ Initialization complete');
+        }
+
+        // Start the app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+
+        // Global functions for HTML onclick handlers
+        window.showView = showView;
+        window.logout = logout;
+        window.showOrderDetails = showOrderDetails;
+        window.closeOrderModal = closeOrderModal;
+        window.watchOrderVideo = watchOrderVideo;
+        
+        // New Order Form functions
+        window.nextStep = nextStep;
+        window.previousStep = previousStep;
+        window.showManualCardForm = showManualCardForm;
+        window.hideManualCardForm = hideManualCardForm;
+        window.addManualCard = addManualCard;
+
+        console.log('[PSA CLIENT] 🎯 Dashboard script loaded');
+
+        // =============================================================================
+        // NEW ORDER FORM - FUNCTIONALITY
+        // =============================================================================
+
+        // Form state management
+        const ORDER_FORM_STATE = {
+            currentStep: 1,
+            totalSteps: 3,
+            selectedService: null,
+            selectedCards: [],
+            searchTimeout: null,
+            searchCache: {},
+            isSubmitting: false
+        };
+
+        // Service configurations with pricing
+        const PSA_SERVICES = {
+            value: { 
+                id: 'value', 
+                name: 'PSA Value', 
+                price: 27, 
+                days: '15-30', 
+                maxValue: 499,
+                description: 'Meilleur rapport qualité/prix'
+            },
+            regular: { 
+                id: 'regular', 
+                name: 'PSA Regular', 
+                price: 35, 
+                days: '10-20', 
+                maxValue: 999,
+                description: 'Traitement plus rapide'
+            },
+            express: { 
+                id: 'express', 
+                name: 'PSA Express', 
+                price: 50, 
+                days: '5-10', 
+                maxValue: 1499,
+                description: 'Service prioritaire'
+            }
+        };
+
+        // Initialize new order form when view is shown
+        function initializeNewOrderForm() {
+            console.log('[NEW ORDER] 🎯 Initializing form...');
+            
+            // Reset form state
+            ORDER_FORM_STATE.currentStep = 1;
+            ORDER_FORM_STATE.selectedService = null;
+            ORDER_FORM_STATE.selectedCards = [];
+            ORDER_FORM_STATE.isSubmitting = false;
+            
+            // Setup event listeners
+            setupNewOrderEventListeners();
+            
+            // Update progress indicators
+            updateStepProgress();
+            
+            // Show first step
+            showFormStep(1);
+        }
+
+        function setupNewOrderEventListeners() {
+            // Service selection
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const service = this.dataset.service;
+                    const price = parseInt(this.dataset.price);
+                    selectService(service, price);
+                });
+            });
+
+            // Search input with debouncing
+            const searchInput = document.getElementById('cardSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const query = e.target.value.trim();
+                    handleCardSearch(query);
+                });
+
+                // Hide results when clicking outside
+                searchInput.addEventListener('blur', function() {
+                    setTimeout(() => hideSearchResults(), 200);
+                });
+            }
+
+            // Form submission
+            const orderForm = document.getElementById('newOrderForm');
+            if (orderForm) {
+                orderForm.addEventListener('submit', handleOrderSubmission);
+            }
+
+            // Close search results on outside click
+            document.addEventListener('click', function(e) {
+                const searchContainer = document.querySelector('.search-container');
+                const searchResults = document.getElementById('searchResults');
+                
+                if (searchContainer && !searchContainer.contains(e.target)) {
+                    hideSearchResults();
+                }
+            });
+        }
+
+        // =============================================================================
+        // STEP NAVIGATION
+        // =============================================================================
+
+        function nextStep() {
+            const currentStep = ORDER_FORM_STATE.currentStep;
+            
+            // Validate current step before proceeding
+            if (!validateStep(currentStep)) {
+                return;
+            }
+            
+            if (currentStep < ORDER_FORM_STATE.totalSteps) {
+                ORDER_FORM_STATE.currentStep++;
+                showFormStep(ORDER_FORM_STATE.currentStep);
+                updateStepProgress();
+                
+                // Update step summary data
+                if (ORDER_FORM_STATE.currentStep === 3) {
+                    updateOrderSummary();
+                }
+            }
+        }
+
+        function previousStep() {
+            if (ORDER_FORM_STATE.currentStep > 1) {
+                ORDER_FORM_STATE.currentStep--;
+                showFormStep(ORDER_FORM_STATE.currentStep);
+                updateStepProgress();
+            }
+        }
+
+        function showFormStep(step) {
+            // Hide all steps
+            const allSteps = document.querySelectorAll('.form-step');
+            allSteps.forEach(stepEl => {
+                stepEl.style.display = 'none';
+            });
+            
+            // Show target step
+            const targetStep = document.getElementById(`formStep${step}`);
+            if (targetStep) {
+                targetStep.style.display = 'block';
+            }
+            
+            // Update navigation buttons
+            updateNavigationButtons();
+        }
+
+        function updateStepProgress() {
+            const currentStep = ORDER_FORM_STATE.currentStep;
+            
+            // Update step indicators
+            const stepIndicators = document.querySelectorAll('.step');
+            stepIndicators.forEach((indicator, index) => {
+                const stepNumber = index + 1;
+                indicator.classList.remove('active', 'completed');
+                
+                if (stepNumber === currentStep) {
+                    indicator.classList.add('active');
+                } else if (stepNumber < currentStep) {
+                    indicator.classList.add('completed');
+                }
+            });
+            
+            // Update progress bar
+            const progressFill = document.getElementById('progressFill');
+            if (progressFill) {
+                const progressPercentage = ((currentStep - 1) / (ORDER_FORM_STATE.totalSteps - 1)) * 100;
+                progressFill.style.width = `${progressPercentage}%`;
+            }
+        }
+
+        function updateNavigationButtons() {
+            const currentStep = ORDER_FORM_STATE.currentStep;
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Show/hide previous button
+            if (prevBtn) {
+                prevBtn.style.display = currentStep > 1 ? 'flex' : 'none';
+            }
+            
+            // Show/hide next vs submit button
+            if (currentStep === ORDER_FORM_STATE.totalSteps) {
+                if (nextBtn) nextBtn.style.display = 'none';
+                if (submitBtn) submitBtn.style.display = 'flex';
+            } else {
+                if (nextBtn) nextBtn.style.display = 'flex';
+                if (submitBtn) submitBtn.style.display = 'none';
+            }
+        }
+
+        function validateStep(step) {
+            clearFormErrors();
+            
+            switch (step) {
+                case 1:
+                    if (!ORDER_FORM_STATE.selectedService) {
+                        showFormError('serviceError', 'Veuillez sélectionner un service de gradation');
+                        return false;
+                    }
+                    return true;
+                    
+                case 2:
+                    if (ORDER_FORM_STATE.selectedCards.length === 0) {
+                        showFormError('cardsError', 'Veuillez ajouter au moins une carte à votre commande');
+                        return false;
+                    }
+                    return true;
+                    
+                case 3:
+                    const acceptTerms = document.getElementById('acceptTerms');
+                    const acceptRisks = document.getElementById('acceptGradingRisks');
+                    
+                    if (!acceptTerms?.checked) {
+                        showFormError('validationError', 'Vous devez accepter les conditions générales');
+                        return false;
+                    }
+                    if (!acceptRisks?.checked) {
+                        showFormError('validationError', 'Vous devez accepter les risques liés à la gradation');
+                        return false;
+                    }
+                    return true;
+                    
+                default:
+                    return true;
+            }
+        }
+
+        function showFormError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+        }
+
+        function clearFormErrors() {
+            const errorElements = document.querySelectorAll('.form-error');
+            errorElements.forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+        }
+
+        // =============================================================================
+        // SERVICE SELECTION
+        // =============================================================================
+
+        function selectService(serviceId, price) {
+            // Remove previous selection
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked card
+            const selectedCard = document.querySelector(`[data-service="${serviceId}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+            
+            // Update state
+            ORDER_FORM_STATE.selectedService = {
+                id: serviceId,
+                name: PSA_SERVICES[serviceId].name,
+                price: price,
+                days: PSA_SERVICES[serviceId].days
+            };
+            
+            // Update UI elements
+            updateServiceDisplay();
+            
+            console.log('[NEW ORDER] ✅ Service selected:', ORDER_FORM_STATE.selectedService);
+        }
+
+        function updateServiceDisplay() {
+            const service = ORDER_FORM_STATE.selectedService;
+            if (!service) return;
+            
+            // Update step 2 displays
+            const selectedServiceEl = document.getElementById('selectedService');
+            if (selectedServiceEl) {
+                selectedServiceEl.textContent = `Service: ${service.name} (${service.price}€)`;
+            }
+            
+            // Update total price
+            updatePriceDisplay();
+        }
+
+        function updatePriceDisplay() {
+            const service = ORDER_FORM_STATE.selectedService;
+            const cardCount = ORDER_FORM_STATE.selectedCards.length;
+            
+            if (!service) return;
+            
+            const totalPrice = service.price * cardCount;
+            
+            // Update step 2 price display
+            const totalPriceEl = document.getElementById('totalPrice');
+            if (totalPriceEl) {
+                totalPriceEl.textContent = `Total: ${totalPrice}€`;
+            }
+            
+            // Update step 3 summary displays
+            updateSummaryPrices();
+        }
+
+        function updateSummaryPrices() {
+            const service = ORDER_FORM_STATE.selectedService;
+            const cardCount = ORDER_FORM_STATE.selectedCards.length;
+            
+            if (!service) return;
+            
+            const totalPrice = service.price * cardCount;
+            
+            const summaryService = document.getElementById('summaryService');
+            const summaryCardCount = document.getElementById('summaryCardCount');
+            const summaryUnitPrice = document.getElementById('summaryUnitPrice');
+            const summaryTotalPrice = document.getElementById('summaryTotalPrice');
+            
+            if (summaryService) summaryService.textContent = service.name;
+            if (summaryCardCount) summaryCardCount.textContent = cardCount;
+            if (summaryUnitPrice) summaryUnitPrice.textContent = `${service.price}€`;
+            if (summaryTotalPrice) summaryTotalPrice.textContent = `${totalPrice}€`;
+        }
+
+        // =============================================================================
+        // CARD SEARCH AND MANAGEMENT
+        // =============================================================================
+
+        function handleCardSearch(query) {
+            const searchResults = document.getElementById('searchResults');
+            const searchLoading = document.getElementById('searchLoading');
+            
+            // Clear previous timeout
+            if (ORDER_FORM_STATE.searchTimeout) {
+                clearTimeout(ORDER_FORM_STATE.searchTimeout);
+            }
+            
+            // Hide results if query is too short
+            if (!query || query.length < 2) {
+                hideSearchResults();
+                return;
+            }
+            
+            // Show loading
+            if (searchLoading) {
+                searchLoading.style.display = 'block';
+            }
+            
+            // Debounce search
+            ORDER_FORM_STATE.searchTimeout = setTimeout(async () => {
+                try {
+                    await performCardSearch(query);
+                } catch (error) {
+                    console.error('[CARD SEARCH] Search failed:', error);
+                    showAlert('Erreur lors de la recherche de cartes', 'danger');
+                } finally {
+                    if (searchLoading) {
+                        searchLoading.style.display = 'none';
+                    }
+                }
+            }, 300);
+        }
+
+        async function performCardSearch(query) {
+            // Check cache first
+            const cacheKey = query.toLowerCase();
+            if (ORDER_FORM_STATE.searchCache[cacheKey]) {
+                displaySearchResults(ORDER_FORM_STATE.searchCache[cacheKey]);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/cards/search?q=${encodeURIComponent(query)}`, {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.cards) {
+                    // Cache results
+                    ORDER_FORM_STATE.searchCache[cacheKey] = data.cards;
+                    displaySearchResults(data.cards);
+                } else {
+                    displaySearchResults([]);
+                }
+            } catch (error) {
+                console.error('[CARD SEARCH] API Error:', error);
+                displaySearchResults([]);
+            }
+        }
+
+        function displaySearchResults(cards) {
+            const searchResults = document.getElementById('searchResults');
+            if (!searchResults) return;
+            
+            if (cards.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">Aucune carte trouvée</div>';
+                searchResults.classList.add('active');
+                return;
+            }
+            
+            const resultsHTML = cards.slice(0, 10).map(card => `
+                <div class="search-result-item" onclick="selectCard(${JSON.stringify(card).replace(/"/g, '&quot;')})">
+                    <img src="${card.image || 'https://pokecardex.b-cdn.net/assets/images/placeholder.jpg'}" 
+                         alt="${card.name}" 
+                         class="search-result-image"
+                         onerror="this.src='https://pokecardex.b-cdn.net/assets/images/placeholder.jpg'">
+                    <div class="search-result-info">
+                        <div class="search-result-name">${card.name}</div>
+                        <div class="search-result-details">${card.series} ${card.rarity ? '• ' + card.rarity : ''}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            searchResults.innerHTML = resultsHTML;
+            searchResults.classList.add('active');
+        }
+
+        function hideSearchResults() {
+            const searchResults = document.getElementById('searchResults');
+            if (searchResults) {
+                searchResults.classList.remove('active');
+            }
+        }
+
+        function selectCard(card) {
+            // Check if card already selected
+            const existingCard = ORDER_FORM_STATE.selectedCards.find(c => 
+                c.name === card.name && c.series === card.series
+            );
+            
+            if (existingCard) {
+                showAlert('Cette carte est déjà dans votre sélection', 'warning');
+                return;
+            }
+            
+            // Check maximum cards limit
+            if (ORDER_FORM_STATE.selectedCards.length >= 20) {
+                showAlert('Maximum 20 cartes par commande', 'warning');
+                return;
+            }
+            
+            // Add card to selection
+            const cardData = {
+                id: Date.now() + Math.random(), // Temporary unique ID
+                source: 'taskmaster',
+                tm_card_id: card.id || null,
+                name: card.name,
+                series: card.series || '',
+                rarity: card.rarity || '',
+                year: card.year || null,
+                image: card.image || 'https://pokecardex.b-cdn.net/assets/images/placeholder.jpg',
+                notes: ''
+            };
+            
+            ORDER_FORM_STATE.selectedCards.push(cardData);
+            
+            // Update UI
+            updateSelectedCardsList();
+            updateCardCounter();
+            updatePriceDisplay();
+            
+            // Clear search
+            const searchInput = document.getElementById('cardSearchInput');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            hideSearchResults();
+            
+            console.log('[NEW ORDER] ✅ Card added:', cardData.name);
+        }
+
+        // Make selectCard available globally for onclick handlers
+        window.selectCard = selectCard;
+
+        function updateSelectedCardsList() {
+            const cardsList = document.getElementById('selectedCardsList');
+            if (!cardsList) return;
+            
+            if (ORDER_FORM_STATE.selectedCards.length === 0) {
+                cardsList.innerHTML = `
+                    <div class="empty-cards-state">
+                        <div class="empty-icon">📝</div>
+                        <p>Aucune carte sélectionnée</p>
+                        <small>Utilisez la recherche ou ajoutez une carte manuellement</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            const cardsHTML = ORDER_FORM_STATE.selectedCards.map(card => `
+                <div class="card-item" data-card-id="${card.id}">
+                    <img src="${card.image}" alt="${card.name}" class="card-item-image"
+                         onerror="this.src='https://pokecardex.b-cdn.net/assets/images/placeholder.jpg'">
+                    <div class="card-item-info">
+                        <div class="card-item-name">${card.name}</div>
+                        <div class="card-item-details">
+                            ${card.series} ${card.rarity ? '• ' + card.rarity : ''}
+                            ${card.source === 'manual' ? '(Ajout manuel)' : '(TaskMaster)'}
+                        </div>
+                    </div>
+                    <div class="card-item-actions">
+                        <button type="button" class="btn-remove-card" onclick="removeCard('${card.id}')">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            cardsList.innerHTML = cardsHTML;
+        }
+
+        function removeCard(cardId) {
+            ORDER_FORM_STATE.selectedCards = ORDER_FORM_STATE.selectedCards.filter(
+                card => card.id != cardId
+            );
+            
+            updateSelectedCardsList();
+            updateCardCounter();
+            updatePriceDisplay();
+            
+            console.log('[NEW ORDER] ✅ Card removed, remaining:', ORDER_FORM_STATE.selectedCards.length);
+        }
+
+        // Make removeCard available globally
+        window.removeCard = removeCard;
+
+        function updateCardCounter() {
+            const cardCountEl = document.getElementById('cardCount');
+            if (cardCountEl) {
+                cardCountEl.textContent = ORDER_FORM_STATE.selectedCards.length;
+            }
+        }
+
+        // =============================================================================
+        // MANUAL CARD ADDITION
+        // =============================================================================
+
+        function showManualCardForm() {
+            const manualForm = document.getElementById('manualCardForm');
+            if (manualForm) {
+                manualForm.style.display = 'block';
+                
+                // Focus on first input
+                const nameInput = document.getElementById('manualCardName');
+                if (nameInput) {
+                    nameInput.focus();
+                }
+            }
+        }
+
+        function hideManualCardForm() {
+            const manualForm = document.getElementById('manualCardForm');
+            if (manualForm) {
+                manualForm.style.display = 'none';
+                
+                // Clear form
+                clearManualCardForm();
+            }
+        }
+
+        function clearManualCardForm() {
+            const inputs = [
+                'manualCardName',
+                'manualCardSeries', 
+                'manualCardNumber',
+                'manualCardRarity',
+                'manualCardYear',
+                'manualCardNotes'
+            ];
+            
+            inputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.value = '';
+                }
+            });
+        }
+
+        function addManualCard() {
+            // Get form data
+            const name = document.getElementById('manualCardName')?.value?.trim();
+            const series = document.getElementById('manualCardSeries')?.value?.trim();
+            const number = document.getElementById('manualCardNumber')?.value?.trim();
+            const rarity = document.getElementById('manualCardRarity')?.value;
+            const year = document.getElementById('manualCardYear')?.value;
+            const notes = document.getElementById('manualCardNotes')?.value?.trim();
+            
+            // Validate required fields
+            if (!name) {
+                showAlert('Le nom de la carte est obligatoire', 'warning');
+                return;
+            }
+            
+            // Check maximum cards limit
+            if (ORDER_FORM_STATE.selectedCards.length >= 20) {
+                showAlert('Maximum 20 cartes par commande', 'warning');
+                return;
+            }
+            
+            // Check if similar card already exists
+            const existingCard = ORDER_FORM_STATE.selectedCards.find(c => 
+                c.name.toLowerCase() === name.toLowerCase() && 
+                c.series.toLowerCase() === (series || '').toLowerCase()
+            );
+            
+            if (existingCard) {
+                showAlert('Une carte similaire est déjà dans votre sélection', 'warning');
+                return;
+            }
+            
+            // Create card data
+            const cardData = {
+                id: Date.now() + Math.random(),
+                source: 'manual',
+                tm_card_id: null,
+                name: name,
+                series: series || '',
+                number: number || '',
+                rarity: rarity || '',
+                year: year ? parseInt(year) : null,
+                image: 'https://pokecardex.b-cdn.net/assets/images/placeholder.jpg',
+                notes: notes || ''
+            };
+            
+            ORDER_FORM_STATE.selectedCards.push(cardData);
+            
+            // Update UI
+            updateSelectedCardsList();
+            updateCardCounter();
+            updatePriceDisplay();
+            
+            // Hide and clear form
+            hideManualCardForm();
+            
+            showAlert('Carte ajoutée avec succès', 'success');
+            console.log('[NEW ORDER] ✅ Manual card added:', cardData.name);
+        }
+
+        // =============================================================================
+        // ORDER SUMMARY AND SUBMISSION
+        // =============================================================================
+
+        function updateOrderSummary() {
+            updateSummaryPrices();
+            
+            // Update cards list in summary
+            const summaryCardsList = document.getElementById('summaryCardsList');
+            if (summaryCardsList && ORDER_FORM_STATE.selectedCards.length > 0) {
+                const cardsHTML = ORDER_FORM_STATE.selectedCards.map(card => `
+                    <div class="summary-card-item">
+                        <span>${card.name}</span>
+                        <span>${ORDER_FORM_STATE.selectedService.price}€</span>
+                    </div>
+                `).join('');
+                
+                summaryCardsList.innerHTML = cardsHTML;
+            }
+        }
+
+        async function handleOrderSubmission(e) {
+            e.preventDefault();
+            
+            if (ORDER_FORM_STATE.isSubmitting) {
+                return;
+            }
+            
+            // Final validation
+            if (!validateStep(3)) {
+                return;
+            }
+            
+            ORDER_FORM_STATE.isSubmitting = true;
+            
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+            }
+            
+            try {
+                await submitOrder();
+            } catch (error) {
+                console.error('[NEW ORDER] Submission failed:', error);
+                showAlert(error.message || 'Erreur lors de la soumission', 'danger');
+            } finally {
+                ORDER_FORM_STATE.isSubmitting = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                }
+            }
+        }
+
+        async function submitOrder() {
+            const service = ORDER_FORM_STATE.selectedService;
+            const cards = ORDER_FORM_STATE.selectedCards;
+            const currentUser = APP_STATE.currentUser;
+            
+            // Prepare order data
+            const orderData = {
+                customer_email: currentUser.email,
+                grading_type: service.id,
+                items: cards.map(card => ({
+                    source: card.source,
+                    tm_card_id: card.tm_card_id,
+                    name: card.name,
+                    series: card.series,
+                    number: card.number,
+                    rarity: card.rarity,
+                    year: card.year,
+                    notes: card.notes,
+                    image_path: card.image !== 'https://pokecardex.b-cdn.net/assets/images/placeholder.jpg' ? card.image : null
+                })),
+                comments: document.getElementById('orderComments')?.value?.trim() || '',
+                card_source: 'client_dashboard'
+            };
+            
+            console.log('[NEW ORDER] 📤 Submitting order:', orderData);
+            
+            // ✅ SÉCURITÉ: Utiliser l'endpoint client authentifié au lieu de /api/grading
+            const response = await apiCall('/orders', {
+                method: 'POST',
+                body: JSON.stringify(orderData)
+            });
+            
+            if (response.success) {
+                console.log('[NEW ORDER] ✅ Order submitted successfully:', response.order.submission_id);
+                
+                showAlert(`Commande créée avec succès ! Numéro de suivi: ${response.order.submission_id}`, 'success');
+                
+                // Reset form and return to dashboard
+                setTimeout(() => {
+                    resetOrderForm();
+                    showView('dashboard');
+                    loadDashboardData(); // Refresh dashboard data
+                }, 2000);
+                
+            } else {
+                throw new Error(response.message || 'Erreur lors de la création de la commande');
+            }
+        }
+
+        function resetOrderForm() {
+            // Reset state
+            ORDER_FORM_STATE.currentStep = 1;
+            ORDER_FORM_STATE.selectedService = null;
+            ORDER_FORM_STATE.selectedCards = [];
+            ORDER_FORM_STATE.isSubmitting = false;
+            
+            // Reset UI
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            clearManualCardForm();
+            hideManualCardForm();
+            
+            const searchInput = document.getElementById('cardSearchInput');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            
+            hideSearchResults();
+            updateStepProgress();
+            showFormStep(1);
+            
+            console.log('[NEW ORDER] 🔄 Form reset');
+        }
+
+        // Override the existing showView function to initialize new order form
+        const originalShowView = showView;
+        showView = function(viewName) {
+            // Call original function
+            originalShowView(viewName);
+            
+            // Initialize new order form if showing that view
+            if (viewName === 'newOrder') {
+                setTimeout(() => {
+                    initializeNewOrderForm();
+                }, 100);
+            }
+        };
+
+    </script>
+</body>
+</html>

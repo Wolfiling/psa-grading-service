@@ -1,0 +1,4731 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSA Grading Service - Gradation Pokémon Professionnelle</title>
+    <!-- Cache buster: Force browser refresh v3.0 - CRITICAL JS FIXES APPLIED -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="description" content="Service professionnel de gradation PSA pour vos cartes Pokémon. Délais transparents, sécurité maximale, suivi en temps réel.">
+    <link rel="icon" type="image/png" href="shopify-psa-logo.png">
+    
+    <!-- Clean Modal System -->
+    <script>
+        // Minimal modal system without debug logs
+        window.__openModalImpl = null; 
+        window.__closeModalImpl = null;
+        
+        window.openModal = function(...args) { 
+            if (window.__openModalImpl) {
+                return window.__openModalImpl(...args);
+            }
+        };
+        
+        window.closeModal = function(...args) {
+            if (window.__closeModalImpl) {
+                return window.__closeModalImpl(...args);
+            }
+        };
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #003d82 0%, #004a9b 50%, #0066cc 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Hide development tools and debug elements */
+        *[data-testid],
+        *[data-cy],
+        .debug,
+        .dev-tools,
+        .development-only {
+            display: none !important;
+        }
+
+        /* Professional background elements */
+        .psa-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(ellipse at top, rgba(255, 215, 0, 0.08) 0%, transparent 70%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Professional PSA Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 3px solid #ffd700;
+            color: #003d82;
+            padding: 3rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 61, 130, 0.15);
+            width: 100%;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .header-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #dc143c 0%, #ffd700 50%, #dc143c 100%);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 3;
+        }
+
+        .psa-logo {
+            width: 140px;
+            height: auto;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 5px 15px rgba(0, 61, 130, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .psa-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            color: #003d82;
+            text-shadow: 0 2px 4px rgba(0, 61, 130, 0.1);
+            position: relative;
+        }
+
+        .hero-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #dc143c, #ffd700, #dc143c);
+            border-radius: 2px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 3rem;
+            font-weight: 400;
+            color: #34495e;
+            text-shadow: none;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            color: white;
+            padding: 18px 40px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .hero-cta.primary {
+            background: linear-gradient(135deg, #dc143c, #e6194f);
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
+        }
+
+        .hero-cta.primary:hover {
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 61, 130, 0.4);
+        }
+
+        .hero-cta.secondary {
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            border: 2px solid #ffd700;
+            box-shadow: 0 4px 15px rgba(0, 61, 130, 0.3);
+        }
+
+        .hero-cta.secondary:hover {
+            background: linear-gradient(135deg, #ffd700, #e6c200);
+            color: #003d82;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Focus styles for accessibility */
+        .hero-cta:focus {
+            outline: 3px solid #ffd700;
+            outline-offset: 2px;
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            border-color: #ffd700;
+        }
+
+        .plan-button:focus {
+            outline: 3px solid #ffd700;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+        }
+
+        .plan-button.recommended-btn:focus {
+            outline: 3px solid #ffd700;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+        }
+
+        a:focus {
+            outline: 2px solid #ffd700;
+            outline-offset: 2px;
+        }
+
+        button:focus {
+            outline: 2px solid #ffd700;
+            outline-offset: 2px;
+        }
+
+        /* Éléments de confiance */
+        .trust-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+            color: #003d82;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 61, 130, 0.1);
+        }
+
+        .trust-badge:hover {
+            transform: translateY(-2px);
+            border-color: #dc143c;
+            box-shadow: 0 8px 25px rgba(0, 61, 130, 0.2);
+        }
+
+        .trust-icon {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            color: #ffd700;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(0, 61, 130, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .trust-badge:hover .trust-icon {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 61, 130, 0.4);
+        }
+
+        .trust-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .trust-text strong {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #003d82;
+        }
+
+        .trust-text span {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+
+        /* Signup Info Section */
+        .signup-info-section {
+            margin-top: 4rem;
+            padding: 0 20px;
+        }
+
+        .signup-info-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 3px solid #ffd700;
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 61, 130, 0.15);
+            position: relative;
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .signup-info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center top, rgba(255, 215, 0, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .signup-info-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .signup-info-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 4px 8px rgba(0, 61, 130, 0.2));
+        }
+
+        .signup-info-header h3 {
+            color: #003d82;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 61, 130, 0.1);
+        }
+
+        .signup-info-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .signup-info-description {
+            font-size: 1.3rem;
+            color: #34495e;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .signup-info-description strong {
+            color: #003d82;
+            font-weight: 700;
+        }
+
+        .signup-info-benefits {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin: 2.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .signup-benefit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(0, 61, 130, 0.1);
+            border-radius: 16px;
+            min-width: 180px;
+            transition: all 0.3s ease;
+        }
+
+        .signup-benefit:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 30px rgba(0, 61, 130, 0.15);
+        }
+
+        .signup-benefit-icon {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .signup-benefit-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #003d82;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .signup-info-action {
+            margin-top: 3rem;
+        }
+
+        .signup-info-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #dc143c, #e6194f);
+            color: white;
+            padding: 20px 50px;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.4);
+            border: 2px solid #ffd700;
+            margin-bottom: 1.5rem;
+        }
+
+        .signup-info-btn:hover {
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 61, 130, 0.5);
+        }
+
+        .signup-info-note {
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 1.2rem 2rem;
+            margin: 2rem auto 0;
+            max-width: 600px;
+            font-size: 1rem;
+            color: #34495e;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* Professional PSA Services */
+        .services {
+            padding: 5rem 0;
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 2rem 0;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 61, 130, 0.1);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            color: #003d82;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            position: relative;
+        }
+
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: #7f8c8d;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin: 4rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 4px 20px rgba(0, 61, 130, 0.08);
+        }
+
+        .pricing-card.recommended {
+            border: 3px solid #ffd700;
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.03);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);
+        }
+
+        .pricing-card.recommended::before {
+            content: 'RECOMMANDÉ';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #dc143c, #e6194f);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 10px rgba(220, 20, 60, 0.3);
+            z-index: 3;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            border-color: #ffd700;
+            box-shadow: 0 12px 40px rgba(0, 61, 130, 0.15);
+        }
+
+        .pricing-card.recommended:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.25);
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #003d82;
+            position: relative;
+            z-index: 2;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: #dc143c;
+            position: relative;
+            z-index: 2;
+        }
+
+        .plan-price-unit {
+            font-size: 1rem;
+            color: #7f8c8d;
+            font-weight: 500;
+            display: block;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .plan-duration {
+            background: rgba(0, 61, 130, 0.1);
+            border: 2px solid rgba(0, 61, 130, 0.2);
+            color: #003d82;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .plan-max-value {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            color: #b8860b;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+            flex-grow: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .plan-features li {
+            padding: 0.8rem 0;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            color: #34495e;
+        }
+
+        .plan-features li:hover {
+            color: #003d82;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: #22c55e;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .plan-button {
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 61, 130, 0.3);
+            position: relative;
+            z-index: 2;
+            margin-top: auto;
+        }
+
+        .plan-button.recommended-btn {
+            background: linear-gradient(135deg, #dc143c, #e6194f);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        .plan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 61, 130, 0.4);
+        }
+
+        .plan-button.recommended-btn:hover {
+            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5);
+        }
+
+        .pricing-disclaimer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(0, 61, 130, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+            color: #2c3e50;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pricing-disclaimer h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #dc143c;
+        }
+
+        .pricing-disclaimer p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-disclaimer .highlight {
+            color: #003d82;
+            font-weight: 600;
+        }
+
+        /* Professional PSA Process Timeline */
+        .process {
+            padding: 5rem 0;
+            position: relative;
+            background: rgba(255, 255, 255, 0.98);
+            margin: 2rem 0;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 61, 130, 0.08);
+        }
+
+        .process-timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Professional Timeline Line */
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: calc(100% - 300px);
+            background: linear-gradient(180deg, #ffd700, #003d82, #dc143c);
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        .process-steps {
+            position: relative;
+            z-index: 2;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .process-step:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .process-step:nth-child(even) .step-content {
+            text-align: right;
+        }
+
+        .step-indicator {
+            position: relative;
+            z-index: 3;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ffd700;
+            box-shadow: 0 8px 20px rgba(0, 61, 130, 0.3);
+            border: 3px solid #ffd700;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin: 0 3rem;
+        }
+
+        .process-step:hover .step-indicator {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 61, 130, 0.4);
+        }
+
+        .step-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
+            padding: 3rem;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 61, 130, 0.08);
+        }
+
+        .process-step:hover .step-content {
+            transform: translateY(-3px);
+            border-color: #ffd700;
+            box-shadow: 0 8px 25px rgba(0, 61, 130, 0.15);
+        }
+
+        .step-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #003d82;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .step-subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .step-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: #34495e;
+        }
+
+        .step-features {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .step-features li {
+            padding: 0.8rem 0;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            color: #34495e;
+            transition: all 0.3s ease;
+        }
+
+        .step-features li:hover {
+            color: #003d82;
+        }
+
+        .step-features li::before {
+            content: '✓';
+            color: #22c55e;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(34, 197, 94, 0.5);
+        }
+
+        .step-highlight {
+            background: rgba(0, 61, 130, 0.05);
+            border: 2px solid rgba(0, 61, 130, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .step-highlight::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .step-highlight h4 {
+            color: #003d82;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .step-highlight p {
+            color: #34495e;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Footer Professional Design */
+        .professional-footer {
+            margin-top: 4rem;
+            padding: 4rem 0 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .professional-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center top, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .footer-content {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .footer-section:hover::before {
+            left: 100%;
+        }
+
+        .footer-section:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .footer-section-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-section-title::before {
+            content: '';
+            width: 45px;
+            height: 3px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+        }
+
+        .footer-section-icon {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .footer-section:hover .footer-section-icon {
+            transform: scale(1.1) rotateY(360deg);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .footer-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-links a::before {
+            content: '→';
+            color: #FFD700;
+            font-weight: 800;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover::before {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .footer-links a:hover {
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateX(8px);
+            padding-left: 20px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-contact-icon {
+            font-size: 1.2rem;
+            background: rgba(102, 126, 234, 0.3);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a5b4fc;
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .footer-contact-item:hover .footer-contact-icon {
+            background: rgba(255, 215, 0, 0.3);
+            border-color: rgba(255, 215, 0, 0.5);
+            color: #FFD700;
+            transform: scale(1.1);
+        }
+
+        .footer-about-text {
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.7;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-bottom-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-copyright {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-trademark {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            position: relative;
+        }
+
+        .footer-trademark::before {
+            content: '⚖️';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .footer-social-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .footer-social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            transition: left 0.3s;
+            z-index: -1;
+        }
+
+        .footer-social-link:hover::before {
+            left: 0;
+        }
+
+        .footer-social-link:hover {
+            color: #333;
+            transform: translateY(-3px) scale(1.1);
+            border-color: #FFD700;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .footer-quality-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid rgba(34, 197, 94, 0.5);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-quality-badge h4 {
+            color: #86efac;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .footer-quality-badge p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Responsive footer */
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .footer-section {
+                padding: 1.5rem;
+            }
+            
+            .footer-bottom-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-social-links {
+                justify-content: center;
+            }
+        }
+
+        .process-cta {
+            text-align: center;
+            margin-top: 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .process-cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF6B35, #FFD700);
+            color: white;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(255, 107, 53, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .process-cta-button:hover::before {
+            left: 100%;
+        }
+
+        .process-cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(255, 107, 53, 0.6);
+        }
+
+        /* Professional FAQ & Security Section */
+        .faq-security {
+            padding: 5rem 0;
+            position: relative;
+            background: rgba(255, 255, 255, 0.98);
+            margin: 2rem 0;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 61, 130, 0.08);
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .faq-column h3 {
+            font-size: 2rem;
+            color: #003d82;
+            margin-bottom: 2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .faq-column h3::before {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(45deg, #dc143c, #ffd700);
+            border-radius: 2px;
+        }
+
+        .faq-item {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 61, 130, 0.05);
+        }
+
+        .faq-item:hover {
+            transform: translateY(-2px);
+            border-color: #ffd700;
+            box-shadow: 0 4px 15px rgba(0, 61, 130, 0.12);
+        }
+
+        .faq-question {
+            padding: 1.8rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .faq-question:hover {
+            background: rgba(0, 61, 130, 0.05);
+        }
+
+        .faq-icon {
+            font-size: 1.3rem;
+            margin-right: 12px;
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            color: #ffd700;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 61, 130, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover .faq-icon {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 61, 130, 0.3);
+        }
+
+        .faq-question-text {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .faq-toggle {
+            font-size: 1.5rem;
+            color: #003d82;
+            transition: transform 0.3s ease;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0, 61, 130, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+            background: rgba(0, 61, 130, 0.2);
+            color: #dc143c;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 61, 130, 0.02);
+            position: relative;
+            z-index: 2;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            border-top: 2px solid rgba(0, 61, 130, 0.1);
+        }
+
+        .faq-answer-content {
+            padding: 2rem;
+            color: #34495e;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .faq-answer h4 {
+            color: #003d82;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .faq-answer ul {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .faq-answer li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: flex-start;
+            color: #34495e;
+        }
+
+        .faq-answer li::before {
+            content: '✓';
+            color: #22c55e;
+            font-weight: 800;
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(34, 197, 94, 0.5);
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .security-highlight {
+            background: rgba(0, 61, 130, 0.05);
+            border: 2px solid rgba(0, 61, 130, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .security-highlight::before {
+            content: '🔒';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: linear-gradient(135deg, #003d82, #004a9b);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .security-highlight h4 {
+            color: #003d82;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            margin-top: 0.3rem;
+        }
+
+        .security-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .security-stat {
+            background: rgba(102, 126, 234, 0.2);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .security-stat-number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #dc143c;
+            margin-bottom: 0.5rem;
+        }
+
+        .security-stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        /* Version mobile responsive */
+        @media (max-width: 768px) {
+            .faq-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .faq-column h3 {
+                font-size: 1.8rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .faq-question {
+                padding: 1.5rem;
+                flex-direction: row;
+                text-align: left;
+            }
+            
+            .faq-question-text {
+                font-size: 1rem;
+            }
+            
+            .security-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Version mobile responsive */
+        @media (max-width: 768px) {
+            .process-timeline::before {
+                left: 30px;
+                width: 4px;
+            }
+
+            .process-step {
+                flex-direction: row !important;
+                align-items: flex-start;
+            }
+
+            .process-step:nth-child(even) .step-content {
+                text-align: left;
+            }
+
+            .step-indicator {
+                width: 80px;
+                height: 80px;
+                font-size: 1.8rem;
+                margin: 0 2rem 0 0;
+                position: relative;
+                left: -10px;
+            }
+
+            .step-content {
+                margin-left: 1rem;
+            }
+
+            .step-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Modal amélioré avec design premium */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 2% auto;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            overflow: hidden;
+            animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .modal-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 3rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* Formulaire amélioré */
+        .form-section {
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 20px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .form-section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 18px 25px;
+            border: 3px solid #e5e7eb;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 25px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .form-textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        /* Radio buttons stylisés */
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .radio-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-card {
+            padding: 1.5rem;
+            border: 3px solid #e5e7eb;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.8);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-card {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .radio-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .radio-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Upload zone stylisé */
+        .upload-zone {
+            border: 3px dashed #e5e7eb;
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Card Search Functionality */
+        .card-search-container {
+            position: relative;
+        }
+
+        .card-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            animation: searchResultsSlideDown 0.3s ease;
+        }
+
+        @keyframes searchResultsSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-search-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-search-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
+            transition: left 0.4s;
+        }
+
+        .card-search-item:hover::before {
+            left: 100%;
+        }
+
+        .card-search-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+            border-left: 5px solid #FFD700;
+        }
+
+        .card-search-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .card-image-thumb {
+            width: 60px;
+            height: 84px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,215,0,0.3);
+        }
+
+        .card-search-item:hover .card-image-thumb {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255,215,0,0.4);
+        }
+
+        .card-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-series {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+
+        .selected-card-preview {
+            margin-top: 15px;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+            animation: selectedCardSlideIn 0.4s ease;
+        }
+
+        @keyframes selectedCardSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .selected-card-preview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255,215,0,0.1), transparent);
+            animation: rotate 8s linear infinite;
+        }
+
+        .selected-card-image {
+            width: 80px;
+            height: 112px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid #FFD700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .selected-card-details {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .selected-card-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .selected-card-series {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .selected-card-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .clear-selection-btn {
+            background: rgba(220, 53, 69, 0.8);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .clear-selection-btn:hover {
+            background: rgba(220, 53, 69, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .search-loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .search-no-results {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+
+        .form-help {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+            display: block;
+            font-style: italic;
+        }
+
+        /* Search input focus state enhancement */
+        .card-search-container .form-input:focus {
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        .card-search-container .form-input:focus + .card-search-results {
+            border-top: 3px solid rgba(102, 126, 234, 0.3);
+        }
+
+        /* Scroll bar styling for search results */
+        .card-search-results::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .card-search-results::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .card-search-results::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.6);
+            border-radius: 10px;
+        }
+
+        .card-search-results::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.8);
+        }
+
+        /* Styles pour la gestion multi-cartes */
+        .added-cards-list {
+            background: rgba(0, 61, 130, 0.05);
+            border: 2px solid rgba(0, 61, 130, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .added-cards-title {
+            color: #003d82;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .added-card-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .added-card-item:hover {
+            border-color: #ffd700;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .added-card-image {
+            width: 60px;
+            height: 84px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        .added-card-details {
+            flex: 1;
+        }
+
+        .added-card-name {
+            font-weight: 700;
+            color: #003d82;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .added-card-series {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .btn-add-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add-card:hover:not(:disabled) {
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-add-card:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-remove-card {
+            background: #dc143c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-remove-card:hover {
+            background: #b8111f;
+            transform: scale(1.05);
+        }
+
+        .card-counter {
+            color: #003d82;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            background: rgba(0, 61, 130, 0.1);
+            border-radius: 20px;
+        }
+
+        /* Conditional fields */
+        .conditional-fields {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.8);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            display: none;
+        }
+
+        .conditional-fields.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 2rem;
+        }
+
+        /* Admin link */
+        .admin-link {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(220, 53, 69, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.8rem;
+                line-height: 1.2;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+                margin-bottom: 2rem;
+            }
+            
+            .trust-indicators {
+                flex-direction: column;
+                gap: 1rem;
+                margin-top: 2rem;
+                align-items: center;
+            }
+            
+            .trust-badge {
+                padding: 0.8rem 1.2rem;
+                gap: 0.8rem;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .trust-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+            
+            .trust-text strong {
+                font-size: 0.9rem;
+            }
+            
+            .trust-text span {
+                font-size: 0.8rem;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                margin: 2rem 0;
+            }
+            
+            .pricing-card {
+                padding: 2rem 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .pricing-card.recommended {
+                transform: none;
+                margin-bottom: 2rem;
+            }
+
+            .pricing-card.recommended:hover {
+                transform: translateY(-5px);
+            }
+
+            .plan-price {
+                font-size: 2.5rem;
+            }
+
+            .plan-name {
+                font-size: 1.6rem;
+            }
+
+            .pricing-disclaimer {
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .pricing-disclaimer h4 {
+                font-size: 1.1rem;
+            }
+
+            .pricing-disclaimer p {
+                font-size: 0.9rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-body {
+                padding: 2rem;
+            }
+            
+            .radio-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== CSS FALLBACKS POUR COMPATIBILITÉ ===== */
+        /* Fallbacks pour backdrop-filter sur navigateurs non supportés */
+        @supports not (backdrop-filter: blur(10px)) {
+            header {
+                background: rgba(255, 255, 255, 0.25);
+            }
+            
+            .trust-badge {
+                background: rgba(255, 255, 255, 0.25);
+                border: 2px solid rgba(255, 255, 255, 0.4);
+            }
+            
+            .pricing-card {
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            }
+            
+            .step-content, .faq-item, .testimonial-card {
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            }
+            
+            .modal {
+                background: rgba(0,0,0,0.9);
+            }
+            
+            .modal-content {
+                background: rgba(255, 255, 255, 0.98);
+            }
+            
+            .form-input, .form-select, .form-textarea {
+                background: rgba(255,255,255,0.95);
+            }
+            
+            .footer-section {
+                background: rgba(255, 255, 255, 0.15);
+                border: 1px solid rgba(255, 255, 255, 0.25);
+            }
+            
+            .professional-footer {
+                background: rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        /* Amélioration contraste pour accessibilité */
+        @media (prefers-contrast: high) {
+            .hero-title, .section-title, .step-title {
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            }
+            
+            .pricing-card, .trust-badge, .step-content {
+                border-width: 3px;
+                background: rgba(255, 255, 255, 0.3);
+            }
+            
+            .plan-button, .hero-cta, .submit-btn {
+                border: 2px solid rgba(0,0,0,0.2);
+            }
+        }
+
+        /* ===== TESTIMONIALS SECTION ===== */
+        .testimonials {
+            padding: 6rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin: 4rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .testimonial-card.featured {
+            border: 3px solid #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .testimonial-card.featured::before {
+            content: '⭐ TÉMOIGNAGE VEDETTE ⭐';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            z-index: 3;
+        }
+
+        .testimonial-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255,215,0,0.1), transparent);
+            animation: rotate 20s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .testimonial-card:hover::after {
+            opacity: 1;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 215, 0, 0.8);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .testimonial-card.featured:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+
+        /* Testimonial Header */
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .client-avatar {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #FFD700, #FF6B35);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover .client-avatar {
+            transform: scale(1.1) rotateY(360deg);
+            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+        }
+
+        .client-initials {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .client-info {
+            flex: 1;
+        }
+
+        .client-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .client-profile {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .service-used {
+            background: rgba(102, 126, 234, 0.3);
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            color: #a5b4fc;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .testimonial-rating {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .stars {
+            font-size: 1.2rem;
+            color: #FFD700;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 2px 4px rgba(255, 215, 0, 0.4);
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+        }
+
+        .rating-value {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+        }
+
+        /* Testimonial Quote */
+        .testimonial-quote {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.95);
+            font-style: italic;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #FFD700;
+        }
+
+        .testimonial-quote::before {
+            content: '"';
+            font-size: 3rem;
+            color: rgba(255, 215, 0, 0.3);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+            line-height: 1;
+        }
+
+        .testimonial-quote strong {
+            color: #FFD700;
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Result Section */
+        .testimonial-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .result-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .result-badge.psa-10 {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid rgba(34, 197, 94, 0.6);
+            color: #86efac;
+        }
+
+        .result-badge.psa-9 {
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid rgba(59, 130, 246, 0.6);
+            color: #93c5fd;
+        }
+
+        .result-badge.psa-8 {
+            background: rgba(168, 85, 247, 0.2);
+            border: 2px solid rgba(168, 85, 247, 0.6);
+            color: #c4b5fd;
+        }
+
+        .result-badge.mixed {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid rgba(255, 215, 0, 0.6);
+            color: #fde047;
+        }
+
+        .testimonial-card:hover .result-badge {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .delivery-time {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover .delivery-time {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .grade-icon, .time-icon {
+            font-size: 1rem;
+        }
+
+        /* Trust Statistics */
+        .trust-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+            padding: 3rem 0;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .stat-item:hover::before {
+            left: 100%;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Testimonials CTA */
+        .testimonials-cta {
+            text-align: center;
+            margin-top: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .testimonials-cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #FF6B35, #FFD700);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(255, 107, 53, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials-cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .testimonials-cta-button:hover::before {
+            left: 100%;
+        }
+
+        .testimonials-cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(255, 107, 53, 0.6);
+        }
+
+        .cta-icon {
+            font-size: 1.3rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .testimonials-note {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 1.5rem;
+            font-style: italic;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Testimonials Responsive */
+        @media (max-width: 768px) {
+            .testimonials {
+                padding: 4rem 0;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                margin: 3rem 0;
+            }
+
+            .testimonial-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .testimonial-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .testimonial-rating {
+                text-align: center;
+            }
+
+            .testimonial-result {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .trust-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+                margin: 3rem 0;
+                padding: 2rem 0;
+            }
+
+            .stat-item {
+                padding: 1.5rem 1rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .testimonials-cta-button {
+                padding: 16px 30px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .testimonial-card.featured::before {
+                font-size: 0.7rem;
+                padding: 6px 15px;
+            }
+
+            .trust-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .client-avatar {
+                width: 55px;
+                height: 55px;
+            }
+
+            .client-initials {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particules Pokémon animées -->
+    <div class="pokemon-particles" id="particles"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-glow"></div>
+        <div class="container">
+            <div class="header-content">
+                <img src="shopify-psa-logo.png" alt="PSA Grading Service" class="psa-logo">
+                <h1 class="hero-title">Service de Gradation PSA<br>pour vos Cartes Pokémon</h1>
+                <p class="hero-subtitle">Augmentez la valeur de vos cartes Pokémon avec le service de gradation PSA.<br>Délais transparents • Protection maximale • Certification reconnue mondialement</p>
+                
+                <div class="hero-actions">
+                    <a href="#services" class="hero-cta primary">✨ Obtenir une évaluation PSA</a>
+                    <a href="/signup" class="hero-cta secondary">🚀 Créer mon compte PSA</a>
+                </div>
+                
+                <!-- Éléments de confiance -->
+                <div class="trust-indicators">
+                    <div class="trust-badge">
+                        <div class="trust-icon">🏅</div>
+                        <div class="trust-text">
+                            <strong>Service PSA Professionnel</strong>
+                            <span>Expertise reconnue</span>
+                        </div>
+                    </div>
+                    
+                    <div class="trust-badge">
+                        <div class="trust-icon">🔒</div>
+                        <div class="trust-text">
+                            <strong>Assurance Complète</strong>
+                            <span>Protection maximale</span>
+                        </div>
+                    </div>
+                    
+                    <div class="trust-badge">
+                        <div class="trust-icon">⚡</div>
+                        <div class="trust-text">
+                            <strong>Délais Garantis</strong>
+                            <span>Suivi en temps réel</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Free Signup Information Section -->
+                <div class="signup-info-section">
+                    <div class="signup-info-card">
+                        <div class="signup-info-header">
+                            <div class="signup-info-icon">🎯</div>
+                            <h3>Déjà client PSA ? Créez votre compte dès maintenant</h3>
+                        </div>
+                        
+                        <div class="signup-info-content">
+                            <p class="signup-info-description">
+                                <strong>Inscription libre disponible</strong> - Plus besoin d'attendre une invitation ! 
+                                Créez votre compte PSA et retrouvez automatiquement toutes vos commandes existantes.
+                            </p>
+                            
+                            <div class="signup-info-benefits">
+                                <div class="signup-benefit">
+                                    <span class="signup-benefit-icon">⚡</span>
+                                    <span class="signup-benefit-text">Accès immédiat à votre espace client</span>
+                                </div>
+                                <div class="signup-benefit">
+                                    <span class="signup-benefit-icon">🔗</span>
+                                    <span class="signup-benefit-text">Liaison automatique de vos commandes</span>
+                                </div>
+                                <div class="signup-benefit">
+                                    <span class="signup-benefit-icon">📱</span>
+                                    <span class="signup-benefit-text">Suivi en temps réel sur mobile</span>
+                                </div>
+                            </div>
+                            
+                            <div class="signup-info-action">
+                                <a href="/signup" class="signup-info-btn">
+                                    ✨ Créer mon compte PSA - C'est gratuit !
+                                </a>
+                                <p class="signup-info-note">
+                                    💡 Utilisez la même adresse email que vos commandes précédentes pour une liaison automatique
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Services PSA - Table de Tarification -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" id="tarifs">💎 Tarification Service PSA</h2>
+                <p class="section-subtitle">Choisissez le service PSA adapté à vos besoins et à votre budget. Transparence totale sur les prix et délais.</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <!-- PSA Value Bulk -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Value Bulk</div>
+                    <div class="plan-price">20€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 65 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur max : 600€</div>
+                    <ul class="plan-features">
+                        <li>Service économique en lot</li>
+                        <li>Authentification PSA standard</li>
+                        <li>Hologramme sécurisé</li>
+                        <li>Certificat d'authenticité</li>
+                        <li>Inscription base PSA</li>
+                        <li>Protection UV</li>
+                        <li>Assurance transport incluse</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('value-bulk')">Choisir Value Bulk</button>
+                </div>
+
+                <!-- PSA Value -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Value</div>
+                    <div class="plan-price">27€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 45 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur max : 800€</div>
+                    <ul class="plan-features">
+                        <li>Service standard populaire</li>
+                        <li>Authentification PSA</li>
+                        <li>Hologramme sécurisé</li>
+                        <li>Certificat numérique</li>
+                        <li>Base de données PSA</li>
+                        <li>Protection complète</li>
+                        <li>Suivi en ligne</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('value')">Choisir Value</button>
+                </div>
+
+                <!-- PSA Value Plus -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Value Plus</div>
+                    <div class="plan-price">40€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 20 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur max : 800€</div>
+                    <ul class="plan-features">
+                        <li>Value accéléré</li>
+                        <li>Traitement plus rapide</li>
+                        <li>Service clientèle amélioré</li>
+                        <li>Notifications email</li>
+                        <li>Suivi détaillé</li>
+                        <li>Emballage renforcé</li>
+                        <li>Assurance premium</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('value-plus')">Choisir Value Plus</button>
+                </div>
+
+                <!-- PSA Regular (Recommandé) -->
+                <div class="pricing-card recommended">
+                    <div class="plan-name">PSA Regular</div>
+                    <div class="plan-price">60€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 601€ - 2 500€</div>
+                    <ul class="plan-features">
+                        <li>Service le plus populaire</li>
+                        <li>Traitement prioritaire</li>
+                        <li>Service clientèle dédié</li>
+                        <li>Notifications SMS + Email</li>
+                        <li>Suivi temps réel</li>
+                        <li>Assurance renforcée</li>
+                        <li>Emballage premium</li>
+                    </ul>
+                    <button class="plan-button recommended-btn" onclick="openModal('regular')">Choisir Regular</button>
+                </div>
+
+                <!-- PSA XP -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA XP</div>
+                    <div class="plan-price">115€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 2 501€ - 4 000€</div>
+                    <ul class="plan-features">
+                        <li>Service express premium</li>
+                        <li>Priorité élevée</li>
+                        <li>Support dédié</li>
+                        <li>Notifications instantanées</li>
+                        <li>Assurance premium</li>
+                        <li>Emballage sécurisé</li>
+                        <li>Suivi VIP</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('xp')">Choisir XP</button>
+                </div>
+
+                <!-- PSA Super XP -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Super XP</div>
+                    <div class="plan-price">222€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 4 001€ - 7 500€</div>
+                    <ul class="plan-features">
+                        <li>Service ultra express</li>
+                        <li>Traitement VIP</li>
+                        <li>Support 24/7</li>
+                        <li>Notifications temps réel</li>
+                        <li>Assurance maximale</li>
+                        <li>Emballage blindé</li>
+                        <li>Livraison express</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('super-xp')">Choisir Super XP</button>
+                </div>
+
+                <!-- PSA WT -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA WT (Walk Through)</div>
+                    <div class="plan-price">444€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 7 501€ - 15 000€</div>
+                    <ul class="plan-features">
+                        <li>Service premium exclusif</li>
+                        <li>Traitement spécialisé</li>
+                        <li>Support expert dédié</li>
+                        <li>Suivi personnalisé</li>
+                        <li>Assurance haut de gamme</li>
+                        <li>Emballage ultra sécurisé</li>
+                        <li>Service White Glove</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('wt')">Choisir WT</button>
+                </div>
+
+                <!-- PSA Premium 1 -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Premium 1</div>
+                    <div class="plan-price">740€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 15 001€ - 35 000€</div>
+                    <ul class="plan-features">
+                        <li>Service premium haute valeur</li>
+                        <li>Traitement expert spécialisé</li>
+                        <li>Support VIP exclusif</li>
+                        <li>Protocole sécurité renforcé</li>
+                        <li>Assurance collection premium</li>
+                        <li>Transport blindé</li>
+                        <li>Certification premium</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('premium-1')">Choisir Premium 1</button>
+                </div>
+
+                <!-- PSA Premium 2 -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Premium 2</div>
+                    <div class="plan-price">1480€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 35 001€ - 70 000€</div>
+                    <ul class="plan-features">
+                        <li>Service ultra premium</li>
+                        <li>Experts gradation senior</li>
+                        <li>Protocole sécurité maximum</li>
+                        <li>Support 24/7 personnalisé</li>
+                        <li>Assurance collection élite</li>
+                        <li>Transport sécurisé premium</li>
+                        <li>Certificat authentification avancée</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('premium-2')">Choisir Premium 2</button>
+                </div>
+
+                <!-- PSA Premium 3 -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Premium 3</div>
+                    <div class="plan-price">2220€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 70 001€ - 150 000€</div>
+                    <ul class="plan-features">
+                        <li>Service collection museum</li>
+                        <li>Gradation experts master</li>
+                        <li>Sécurité niveau musée</li>
+                        <li>Concierge service exclusif</li>
+                        <li>Assurance collection musée</li>
+                        <li>Transport blindé spécialisé</li>
+                        <li>Documentation premium complète</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('premium-3')">Choisir Premium 3</button>
+                </div>
+
+                <!-- PSA Premium 5 -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Premium 5</div>
+                    <div class="plan-price">3700€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 150 001€ - 250 000€</div>
+                    <ul class="plan-features">
+                        <li>Service collection élite</li>
+                        <li>Comité experts PSA senior</li>
+                        <li>Protocole sécurité gouvernemental</li>
+                        <li>Butler service personnalisé</li>
+                        <li>Assurance Lloyd's of London</li>
+                        <li>Transport militaire sécurisé</li>
+                        <li>Certification historique premium</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('premium-5')">Choisir Premium 5</button>
+                </div>
+
+                <!-- PSA Premium 10 -->
+                <div class="pricing-card">
+                    <div class="plan-name">PSA Premium 10</div>
+                    <div class="plan-price">7400€<span class="plan-price-unit">par carte</span></div>
+                    <div class="plan-duration">≈ 10 jours ouvrés (estimation*)</div>
+                    <div class="plan-max-value">Valeur : 250 000€+</div>
+                    <ul class="plan-features">
+                        <li>Service collection légendaire</li>
+                        <li>Conseil experts PSA fondateurs</li>
+                        <li>Sécurité niveau trésor national</li>
+                        <li>Service concierge exclusif VIP</li>
+                        <li>Assurance collection historique</li>
+                        <li>Transport gouvernemental blindé</li>
+                        <li>Certification patrimoine mondial</li>
+                    </ul>
+                    <button class="plan-button" onclick="openModal('premium-10')">Choisir Premium 10</button>
+                </div>
+            </div>
+
+            <!-- Disclaimer sur les délais et informations importantes -->
+            <div class="pricing-disclaimer">
+                <h4>⚠️ Informations importantes - Délais et Coûts</h4>
+                <p>Les délais indiqués sont des <span class="highlight">estimations basées sur les standards PSA habituels</span> une fois vos cartes reçues dans nos locaux. <strong>Les délais réels peuvent varier</strong> selon la charge PSA et ne sont pas garantis.</p>
+                <p>Pour un <span class="highlight">envoi depuis la France</span>, comptez généralement <span class="highlight">plusieurs jours supplémentaires</span> dans chaque sens pour l'expédition sécurisée.</p>
+                <p><strong>Tarification :</strong> Tous les prix sont affichés et sont <strong>susceptibles de modifications</strong>. Les frais d'assurance et d'expédition sont inclus dans nos tarifs actuels.</p>
+                <p><strong>Valeur déclarée :</strong> Assurez-vous que la valeur de votre carte correspond au tier sélectionné. Une carte dépassant la valeur maximale du tier pourrait être redirigée vers un service supérieur selon les standards PSA.</p>
+                <p><strong>Note importante :</strong> Ce service suit les <span class="highlight">standards et délais PSA officiels</span> qui peuvent évoluer. Consultez nos conditions générales pour les détails complets et limitations de responsabilité.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ & Sécurité Section -->
+    <section class="faq-security" id="faq-security">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">🛡️ Questions Fréquentes & Sécurité</h2>
+                <p class="section-subtitle">Toutes les réponses à vos questions sur notre service PSA professionnel et nos garanties de sécurité maximale</p>
+            </div>
+            
+            <div class="faq-grid">
+                <!-- Colonne FAQ -->
+                <div class="faq-column">
+                    <h3>❓ Questions Fréquentes</h3>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-faq-toggle>
+                            <div class="faq-icon">⏰</div>
+                            <div class="faq-question-text">Combien de temps prend la gradation PSA ?</div>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h4>Estimations de délais PSA (variables) :</h4>
+                                <ul>
+                                    <li><strong>PSA Value Bulk :</strong> ≈ 65 jours ouvrés (cartes jusqu'à 600€) - délais non garantis</li>
+                                    <li><strong>PSA Value :</strong> ≈ 45 jours ouvrés (cartes jusqu'à 800€) - délais non garantis</li>
+                                    <li><strong>PSA Value Plus :</strong> ≈ 20 jours ouvrés (cartes jusqu'à 800€) - délais non garantis</li>
+                                    <li><strong>PSA Regular :</strong> ≈ 10 jours ouvrés (cartes 601€ - 2 500€) - délais non garantis</li>
+                                    <li><strong>PSA XP :</strong> ≈ 10 jours ouvrés (cartes 2 501€ - 4 000€) - délais non garantis</li>
+                                    <li><strong>PSA Super XP :</strong> ≈ 10 jours ouvrés (cartes 4 001€ - 7 500€) - délais non garantis</li>
+                                    <li><strong>Services Premium :</strong> WT, Premium 1-10 pour collections haute valeur - délais non garantis</li>
+                                </ul>
+                                <p><strong>Important :</strong> Ces délais sont des <strong>estimations basées sur les standards PSA habituels</strong> et peuvent varier significativement selon la charge de travail PSA. Ajoutez plusieurs jours dans chaque sens pour l'expédition depuis/vers la France.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" data-faq-toggle>
+                            <div class="faq-icon">🔒</div>
+                            <div class="faq-question-text">Comment mes cartes sont-elles protégées ?</div>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h4>Protection multi-niveaux garantie :</h4>
+                                <ul>
+                                    <li>Emballage professionnel toploader + team bag obligatoire</li>
+                                    <li>Coffres-forts ignifugés dans nos locaux sécurisés</li>
+                                    <li>Surveillance 24h/24 avec caméras et alarmes</li>
+                                    <li>Assurance ad valorem pendant tout le processus</li>
+                                    <li>Transport sécurisé pour les cartes haute valeur</li>
+                                    <li>Traçabilité complète à chaque étape</li>
+                                </ul>
+                                <div class="security-highlight">
+                                    <h4>Garantie Sécurité</h4>
+                                    <p>Vos cartes sont assurées selon leur valeur déclarée pendant toute la durée du processus PSA, conformément à nos conditions générales de service.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" data-faq-toggle>
+                            <div class="faq-icon">📱</div>
+                            <div class="faq-question-text">Comment suivre ma demande PSA ?</div>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h4>Suivi en temps réel intégral :</h4>
+                                <ul>
+                                    <li>Numéro de dossier unique à la soumission</li>
+                                    <li>Notifications automatiques par email et SMS</li>
+                                    <li>Dashboard personnel avec statut en direct</li>
+                                    <li>Système de suivi connecté aux données PSA</li>
+                                    <li>Alertes à chaque étape importante</li>
+                                    <li>Photos de vos cartes gradées disponibles</li>
+                                </ul>
+                                <p><strong>Accès :</strong> Utilisez votre numéro de dossier sur notre page de suivi dédiée pour consulter l'avancement 24h/24.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" data-faq-toggle>
+                            <div class="faq-icon">💳</div>
+                            <div class="faq-question-text">Quels modes de paiement acceptez-vous ?</div>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h4>Paiements sécurisés acceptés :</h4>
+                                <ul>
+                                    <li>Cartes bancaires (Visa, Mastercard, American Express)</li>
+                                    <li>PayPal avec protection acheteur</li>
+                                    <li>Solutions de paiement flexibles disponibles</li>
+                                </ul>
+                                <p><strong>Sécurité :</strong> Tous les paiements sont cryptés SSL et conformes PCI-DSS. Facturation uniquement après validation de votre dossier selon nos conditions générales.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne Sécurité & Garanties -->
+                <div class="faq-column">
+                    <h3>🛡️ Sécurité & Garanties</h3>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-faq-toggle>
+                            <div class="faq-icon">⚠️</div>
+                            <div class="faq-question-text">Que se passe-t-il si ma carte est endommagée ?</div>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h4>Protocole de protection et compensation :</h4>
+                                <ul>
+                                    <li>Inspection photographique à la réception</li>
+                                    <li>Signalement immédiat de tout dommage</li>
+                                    <li>Assurance complète jusqu'à la valeur déclarée</li>
+                                    <li>Compensation rapide en cas de sinistre</li>
+                                    <li>Expertise indépendante si nécessaire</li>
+                                </ul>
+                                <div class="security-highlight">
+                                    <h4>Engagement Qualité</h4>
+                                    <p>Excellent historique de sécurité grâce à nos protocoles stricts de manipulation et stockage sécurisé.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" data-faq-toggle>
+                            <div class="faq-icon">💰</div>
+                            <div class="faq-question-text">Comment déterminer la valeur de ma carte ?</div>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h4>Évaluation professionnelle gratuite :</h4>
+                                <ul>
+                                    <li>Consultation des bases de données officielles</li>
+                                    <li>Analyse comparative du marché actuel</li>
+                                    <li>Prise en compte de l'état et de la rareté</li>
+                                    <li>Recommandation du service PSA optimal</li>
+                                    <li>Estimation post-gradation fournie</li>
+                                </ul>
+                                <p><strong>Sources :</strong> eBay sold listings, PSA registry, PWCC marketplace, et notre expertise de 5+ ans dans la gradation.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" data-faq-toggle>
+                            <div class="faq-icon">🏆</div>
+                            <div class="faq-question-text">Que comprend votre assurance ?</div>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h4>Couverture d'assurance complète :</h4>
+                                <ul>
+                                    <li>Assurance selon valeur déclarée de vos cartes</li>
+                                    <li>Protection vol, perte et dommages</li>
+                                    <li>Couverture transport aller et retour</li>
+                                    <li>Assurance stockage dans nos locaux</li>
+                                    <li>Protection pendant le processus PSA</li>
+                                    <li>Franchise zéro pour le client</li>
+                                </ul>
+                                <div class="security-stats">
+                                    <div class="security-stat">
+                                        <div class="security-stat-number">Premium</div>
+                                        <div class="security-stat-label">Couverture adaptée</div>
+                                    </div>
+                                    <div class="security-stat">
+                                        <div class="security-stat-number">24/7</div>
+                                        <div class="security-stat-label">Surveillance sécurisée</div>
+                                    </div>
+                                    <div class="security-stat">
+                                        <div class="security-stat-number">Top</div>
+                                        <div class="security-stat-label">Historique sécurité</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" data-faq-toggle>
+                            <div class="faq-icon">📞</div>
+                            <div class="faq-question-text">Comment contacter le support ?</div>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h4>Support client disponible :</h4>
+                                <ul>
+                                    <li>Email prioritaire : support@psa-grading.fr</li>
+                                    <li>Chat en direct (9h-18h, lun-ven)</li>
+                                    <li>Téléphone dédié pour urgences</li>
+                                    <li>Support technique spécialisé</li>
+                                    <li>Gestionnaire dédié pour gros volumes</li>
+                                </ul>
+                                <p><strong>Engagement :</strong> Réponse rapide en priorité en jour ouvré, support prioritaire pour les services Express selon nos conditions de service.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Processus PSA Professionnel -->
+    <section class="process" id="processus">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">🏆 Notre Processus PSA Professionnel</h2>
+                <p class="section-subtitle">Un workflow sécurisé et transparent, conçu pour protéger vos cartes précieuses tout au long du processus de gradation PSA</p>
+            </div>
+            
+            <div class="process-timeline">
+                <div class="process-steps">
+                    <!-- Étape 1: Sélection du Service -->
+                    <div class="process-step">
+                        <div class="step-indicator">1</div>
+                        <div class="step-content">
+                            <h3 class="step-title">🎯 Sélection du Service PSA</h3>
+                            <p class="step-subtitle">Choisissez le niveau de service adapté à vos cartes</p>
+                            <p class="step-description">
+                                Sélectionnez parmi nos trois services PSA disponibles : Value (40 jours), Regular (20 jours), ou Express (10 jours). 
+                                Chaque service propose une valeur maximale différente et des délais optimisés selon vos besoins.
+                            </p>
+                            <ul class="step-features">
+                                <li>Service PSA Value: Idéal pour cartes jusqu'à 499€</li>
+                                <li>Service PSA Regular: Pour cartes jusqu'à 1999€ (Recommandé)</li>
+                                <li>Service PSA Express: Pour cartes premium jusqu'à 9999€</li>
+                                <li>Consultation gratuite pour orienter votre choix</li>
+                            </ul>
+                            <div class="step-highlight">
+                                <h4>Conseil Expert</h4>
+                                <p>Notre équipe vous accompagne dans le choix du service optimal selon la valeur estimée et l'urgence de votre demande.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2: Soumission en Ligne -->
+                    <div class="process-step">
+                        <div class="step-indicator">2</div>
+                        <div class="step-content">
+                            <h3 class="step-title">📝 Soumission Sécurisée</h3>
+                            <p class="step-subtitle">Dossier complet et suivi personnalisé</p>
+                            <p class="step-description">
+                                Remplissez notre formulaire sécurisé avec toutes les informations de vos cartes. 
+                                Indiquez la provenance (boutique ou live stream) et uploadez des photos haute qualité pour une évaluation préliminaire.
+                            </p>
+                            <ul class="step-features">
+                                <li>Formulaire sécurisé avec auto-completion des cartes</li>
+                                <li>Upload d'images haute résolution optionnel</li>
+                                <li>Identification automatique par numéro de série</li>
+                                <li>Numéro de dossier unique pour le suivi</li>
+                            </ul>
+                            <div class="step-highlight">
+                                <h4>Base de Données Complète</h4>
+                                <p>Plus de 50,000 cartes Pokémon référencées avec images et détails techniques pour une identification précise.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3: Expédition Sécurisée -->
+                    <div class="process-step">
+                        <div class="step-indicator">3</div>
+                        <div class="step-content">
+                            <h3 class="step-title">📦 Expédition Ultra-Sécurisée</h3>
+                            <p class="step-subtitle">Protection maximale et assurance complète</p>
+                            <p class="step-description">
+                                Emballage professionnel requis avec protection toploader + team bag minimum. 
+                                Envoi recommandé avec assurance ad valorem et suivi en temps réel jusqu'à nos locaux sécurisés.
+                            </p>
+                            <ul class="step-features">
+                                <li>Guide d'emballage professionnel fourni</li>
+                                <li>Assurance ad valorem obligatoire</li>
+                                <li>Adresse sécurisée avec accusé de réception</li>
+                                <li>Notification automatique de réception</li>
+                            </ul>
+                            <div class="step-highlight">
+                                <h4>Sécurité Renforcée</h4>
+                                <p>Nos locaux disposent de coffres-forts ignifugés et d'un système de surveillance 24h/24 pour protéger vos cartes.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 4: Traitement PSA -->
+                    <div class="process-step">
+                        <div class="step-indicator">4</div>
+                        <div class="step-content">
+                            <h3 class="step-title">🔬 Traitement PSA Professionnel</h3>
+                            <p class="step-subtitle">Suivi en temps réel et updates réguliers</p>
+                            <p class="step-description">
+                                Vos cartes sont transmises à PSA dans un envoi groupé sécurisé. 
+                                Suivez chaque étape du processus PSA grâce à notre système de suivi connecté aux bases de données PSA.
+                            </p>
+                            <ul class="step-features">
+                                <li>Transmission groupée optimisée vers PSA</li>
+                                <li>Suivi en temps réel via API PSA</li>
+                                <li>Notifications automatiques à chaque étape</li>
+                                <li>Accès à votre dashboard personnel de suivi</li>
+                            </ul>
+                            <div class="step-highlight">
+                                <h4>Transparence Totale</h4>
+                                <p>Recevez des emails automatiques et consultez l'avancement en temps réel sur votre espace client dédié.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 5: Retour Sécurisé -->
+                    <div class="process-step">
+                        <div class="step-indicator">5</div>
+                        <div class="step-content">
+                            <h3 class="step-title">🎁 Retour et Livraison</h3>
+                            <p class="step-subtitle">Réception de vos cartes gradées PSA</p>
+                            <p class="step-description">
+                                Une fois gradées par PSA, vos cartes sont expédiées vers nos locaux puis vers vous avec le même niveau de sécurité. 
+                                Emballage professionnel et assurance complète pour une réception parfaite.
+                            </p>
+                            <ul class="step-features">
+                                <li>Réception et vérification qualité avant expédition</li>
+                                <li>Emballage professionnel anti-choc</li>
+                                <li>Expédition assurée avec suivi complet</li>
+                                <li>Photos avant expédition disponibles sur demande</li>
+                            </ul>
+                            <div class="step-highlight">
+                                <h4>Garantie Satisfaction</h4>
+                                <p>Vos cartes gradées PSA arrivent dans un état parfait ou nous prenons en charge tous les frais et démarches.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action Final -->
+                <div class="process-cta">
+                    <a href="#services" class="process-cta-button">
+                        🚀 Commencer ma Gradation PSA
+                    </a>
+                    <p style="color: rgba(255,255,255,0.8); margin-top: 2rem; font-size: 1.1rem;">
+                        <strong>Expérience éprouvée</strong> • <strong>Clients satisfaits</strong> • <strong>Assurance complète</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Retours d'expérience représentatifs</h2>
+                <p class="section-subtitle">
+                    Découvrez des exemples illustratifs d'expériences client typiques avec notre service de gradation PSA
+                </p>
+                <p style="color: rgba(255,215,0,0.9); font-size: 0.95rem; margin-top: 1rem; font-weight: 600;">
+                    ⚠️ Les exemples ci-dessous sont illustratifs et représentent des expériences typiques. Les résultats peuvent varier selon les cartes.
+                </p>
+            </div>
+
+            <div class="testimonials-grid">
+                
+                <!-- DISCLAIMER PRINCIPAL - VISIBLE -->
+                <div style="grid-column: 1 / -1; background: rgba(255,215,0,0.2); border: 3px solid rgba(255,215,0,0.6); border-radius: 20px; padding: 2rem; text-align: center; margin-bottom: 2rem;">
+                    <h3 style="color: #FFD700; font-size: 1.4rem; margin-bottom: 1rem; font-weight: 800;">
+                        📜 EXEMPLES ILLUSTRATIFS
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.95); font-size: 1.1rem; margin: 0; line-height: 1.6;">
+                        Les scénarios ci-dessous sont des <strong>exemples représentatifs</strong> d'expériences client typiques. 
+                        Ils ne constituent pas des témoignages vérifiés mais illustrent nos standards de service.
+                    </p>
+                </div>
+                <!-- Exemple illustratif 1 - Collectionneur expérimenté -->
+                <div class="testimonial-card featured">
+                    <div class="testimonial-header">
+                        <div class="client-avatar">
+                            <span class="client-initials">EX</span>
+                        </div>
+                        <div class="client-info">
+                            <div class="client-name">Exemple Client</div>
+                            <div class="client-profile">Collectionneur expérimenté</div>
+                            <div class="service-used">Service Express</div>
+                        </div>
+                        <div class="testimonial-rating">
+                            <div class="stars">★★★★★</div>
+                            <div class="rating-value">Excellent</div>
+                        </div>
+                    </div>
+                    <blockquote class="testimonial-quote">
+                        "Expérience représentative avec le Service Express pour une carte rare. Excellent emballage, suivi transparent et communication réactive. Les collectionneurs expérimentés apprécient généralement notre approche professionnelle."
+                    </blockquote>
+                    <div class="testimonial-result">
+                        <div class="result-badge psa-10">
+                            <span class="grade-icon">🏆</span>
+                            <span>Grade Premium</span>
+                        </div>
+                        <div class="delivery-time">
+                            <span class="time-icon">⚡</span>
+                            <span>Service Rapide</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemple illustratif 2 - Professionnel revente -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="client-avatar">
+                            <span class="client-initials">PR</span>
+                        </div>
+                        <div class="client-info">
+                            <div class="client-name">Profil Pro</div>
+                            <div class="client-profile">Revendeur professionnel</div>
+                            <div class="service-used">Service Value</div>
+                        </div>
+                        <div class="testimonial-rating">
+                            <div class="stars">★★★★★</div>
+                            <div class="rating-value">Très Bien</div>
+                        </div>
+                    </div>
+                    <blockquote class="testimonial-quote">
+                        "Exemple typique d'utilisation du Service Value pour l'activité professionnelle. Bon rapport qualité-prix, délais généralement respectés et cartes retournées en bon état. Le suivi client facilite la gestion des commandes."
+                    </blockquote>
+                    <div class="testimonial-result">
+                        <div class="result-badge psa-9">
+                            <span class="grade-icon">⭐</span>
+                            <span>Grade Solide</span>
+                        </div>
+                        <div class="delivery-time">
+                            <span class="time-icon">📅</span>
+                            <span>Délai Respecté</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemple illustratif 3 - Débutant -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="client-avatar">
+                            <span class="client-initials">DÉ</span>
+                        </div>
+                        <div class="client-info">
+                            <div class="client-name">Client Débutant</div>
+                            <div class="client-profile">Premier envoi PSA</div>
+                            <div class="service-used">Service Regular</div>
+                        </div>
+                        <div class="testimonial-rating">
+                            <div class="stars">★★★★★</div>
+                            <div class="rating-value">Satisfait</div>
+                        </div>
+                    </div>
+                    <blockquote class="testimonial-quote">
+                        "Expérience typique d'un premier envoi PSA. L'équipe fournit généralement des conseils pour choisir le service approprié. Les débutants apprécient habituellement l'accompagnement et la communication transparente."
+                    </blockquote>
+                    <div class="testimonial-result">
+                        <div class="result-badge psa-8">
+                            <span class="grade-icon">✨</span>
+                            <span>Grade Satisfaisant</span>
+                        </div>
+                        <div class="delivery-time">
+                            <span class="time-icon">📦</span>
+                            <span>Service Standard</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemple illustratif 4 - Collectionneur avancé -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="client-avatar">
+                            <span class="client-initials">CO</span>
+                        </div>
+                        <div class="client-info">
+                            <div class="client-name">Collectionneur TCG</div>
+                            <div class="client-profile">Collectionneur expérimenté</div>
+                            <div class="service-used">Service Express</div>
+                        </div>
+                        <div class="testimonial-rating">
+                            <div class="stars">★★★★★</div>
+                            <div class="rating-value">Très Bien</div>
+                        </div>
+                    </div>
+                    <blockquote class="testimonial-quote">
+                        "Exemple représentatif de gestion de cartes rares. Les collectionneurs expérimentés apprécient généralement l'assurance incluse et les mesures de sécurité des envois. La confiance se construit avec l'expérience."
+                    </blockquote>
+                    <div class="testimonial-result">
+                        <div class="result-badge mixed">
+                            <span class="grade-icon">📊</span>
+                            <span>Grades Variables</span>
+                        </div>
+                        <div class="delivery-time">
+                            <span class="time-icon">🚀</span>
+                            <span>Service Rapide</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust Indicators -->
+            <div class="trust-stats">
+                <div class="stat-item">
+                    <div class="stat-number">Nombreuses</div>
+                    <div class="stat-label">Cartes traitées</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">Excellente</div>
+                    <div class="stat-label">Satisfaction</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">Très Bien</div>
+                    <div class="stat-label">Évaluations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">Solide</div>
+                    <div class="stat-label">Historique</div>
+                </div>
+            </div>
+            
+            <!-- Disclaimer Statistiques -->
+            <div style="background: rgba(255,215,0,0.1); border: 2px solid rgba(255,215,0,0.3); border-radius: 15px; padding: 1.5rem; margin: 2rem 0; text-align: center;">
+                <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem; margin: 0;">
+                    📊 <strong>Note:</strong> Les indicateurs ci-dessus représentent notre engagement qualité général. Les résultats individuels peuvent varier selon l'état initial des cartes.
+                </p>
+            </div>
+
+            <div class="testimonials-cta">
+                <a href="#psa-form" class="testimonials-cta-button" onclick="openModal('regular'); return false;">
+                    <span class="cta-icon">🎯</span>
+                    Rejoignez nos clients satisfaits
+                </a>
+                <div class="testimonials-note" style="background: rgba(255,215,0,0.15); border: 2px solid rgba(255,215,0,0.4); border-radius: 15px; padding: 1.5rem; margin-top: 2rem;">
+                    <p style="color: rgba(255,255,255,0.95); font-size: 1rem; margin: 0 0 1rem 0; font-weight: 600;">
+                        ⚠️ <strong>IMPORTANT - Disclaimer Légal</strong>
+                    </p>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem; margin: 0; line-height: 1.6;">
+                        Les exemples présentés ci-dessus sont <strong>purement illustratifs</strong> et représentent des expériences client typiques. 
+                        Les résultats de gradation PSA dépendent de l'état initial des cartes et ne peuvent être garantis. 
+                        Les délais peuvent varier selon la charge PSA et les conditions d'expédition.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Professionnel -->
+    <footer class="professional-footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Section Contact -->
+                <div class="footer-section">
+                    <h3 class="footer-section-title">
+                        <div class="footer-section-icon">📞</div>
+                        Contact & Support
+                    </h3>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon">📧</div>
+                        <span>support@psa-grading.fr</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon">⏰</div>
+                        <span>Lun-Ven : 9h-18h</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon">💬</div>
+                        <span>Chat en direct disponible</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon">🚚</div>
+                        <span>Livraison sécurisée partout en France</span>
+                    </div>
+                    
+                    <div class="footer-quality-badge">
+                        <h4>🔒 Garantie Sécurité</h4>
+                        <p>Assurance complète & transport sécurisé inclus</p>
+                    </div>
+                </div>
+
+                <!-- Section Services -->
+                <div class="footer-section">
+                    <h3 class="footer-section-title">
+                        <div class="footer-section-icon">🏆</div>
+                        Services PSA
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="#services">Services de Gradation</a></li>
+                        <li><a href="#tarifs">Tarifs & Délais</a></li>
+                        <li><a href="#processus">Notre Processus</a></li>
+                        <li><a href="#faq-security">FAQ & Sécurité</a></li>
+                        <li><a href="#testimonials">Témoignages</a></li>
+                        <li><a href="#psa-form">Demande de Devis</a></li>
+                    </ul>
+                    
+                    <div class="footer-quality-badge">
+                        <h4>⚡ Délais Respectés</h4>
+                        <p>Suivi en temps réel & engagements tenus</p>
+                    </div>
+                </div>
+
+                <!-- Section Légal -->
+                <div class="footer-section">
+                    <h3 class="footer-section-title">
+                        <div class="footer-section-icon">⚖️</div>
+                        Informations Légales
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="alert('Page en cours de développement'); return false;">Mentions Légales</a></li>
+                        <li><a href="#" onclick="alert('Page en cours de développement'); return false;">Politique de Confidentialité</a></li>
+                        <li><a href="#" onclick="alert('Page en cours de développement'); return false;">CGV & CGU</a></li>
+                        <li><a href="#" onclick="alert('Page en cours de développement'); return false;">Politique de Remboursement</a></li>
+                        <li><a href="#" onclick="alert('Page en cours de développement'); return false;">Assurance & Transport</a></li>
+                        <li><a href="#psa-form" onclick="openModal('regular'); return false;">Nous Contacter</a></li>
+                    </ul>
+                    
+                    <div class="footer-quality-badge">
+                        <h4>✅ Conformité RGPD</h4>
+                        <p>Protection maximale de vos données</p>
+                    </div>
+                </div>
+
+                <!-- Section À Propos -->
+                <div class="footer-section">
+                    <h3 class="footer-section-title">
+                        <div class="footer-section-icon">🏅</div>
+                        PSA Grading Pro
+                    </h3>
+                    <p class="footer-about-text">
+                        <strong>Service professionnel de gradation PSA</strong> pour collectionneurs passionnés. 
+                        Expertise reconnue, sécurité maximale et transparence totale sur les délais et tarifs.
+                    </p>
+                    <p class="footer-about-text">
+                        ✨ <strong>Notre Mission :</strong> Démocratiser l'accès aux services PSA avec 
+                        un accompagnement expert et des prix transparents.
+                    </p>
+                    
+                    <div class="footer-quality-badge">
+                        <h4>🎯 Excellence Garantie</h4>
+                        <p>Partenaire de confiance pour vos cartes précieuses</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <div class="footer-copyright">
+                        © 2025 PSA Grading Service. Tous droits réservés.
+                    </div>
+                    
+                    <div class="footer-social-links">
+                        <a href="#" class="footer-social-link" aria-label="Facebook" onclick="alert('Suivez-nous bient\u00f4t sur Facebook !'); return false;">
+                            📘
+                        </a>
+                        <a href="#" class="footer-social-link" aria-label="Instagram" onclick="alert('Suivez-nous bient\u00f4t sur Instagram !'); return false;">
+                            📷
+                        </a>
+                        <a href="#" class="footer-social-link" aria-label="YouTube" onclick="alert('Suivez-nous bient\u00f4t sur YouTube !'); return false;">
+                            📺
+                        </a>
+                        <a href="#" class="footer-social-link" aria-label="Discord" onclick="alert('Rejoignez bient\u00f4t notre Discord !'); return false;">
+                            🎮
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Disclaimer PSA Trademark -->
+                <div class="footer-trademark">
+                    <strong>Disclaimer Important :</strong> Ce site est un service indépendant de gradation. 
+                    PSA® est une marque déposée de Professional Sports Authenticator LLC. 
+                    Nous ne sommes pas affiliés à PSA. Notre service consiste à faciliter l'envoi de vos cartes vers PSA 
+                    avec accompagnement professionnel, assurance et suivi personnalisé.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="psaModal" class="modal" data-anchor="psa-form">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h2 class="modal-title">🏆 Demande de Gradation PSA</h2>
+                <p class="modal-subtitle" id="selectedServiceInfo"></p>
+            </div>
+            
+            <div class="modal-body">
+                <form id="psaForm" enctype="multipart/form-data">
+                    <!-- Section 1: Informations client -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">👤 Informations Client</h3>
+                        <div class="form-group">
+                            <label class="form-label" for="customerEmail">Email de contact *</label>
+                            <input type="email" id="customerEmail" name="customerEmail" class="form-input" required placeholder="votre@email.com">
+                        </div>
+                        
+                        <!-- Liste des cartes ajoutées -->
+                        <div id="addedCardsList" class="added-cards-list" style="display: none;">
+                            <h4 class="added-cards-title">📝 Cartes ajoutées :</h4>
+                            <div id="cardsContainer" class="cards-container"></div>
+                        </div>
+
+                        <!-- Ajout de nouvelle carte -->
+                        <div class="form-group">
+                            <label class="form-label" for="cardName">Ajouter une carte</label>
+                            <div class="card-search-container">
+                                <input type="text" id="cardName" name="cardName" class="form-input" 
+                                       placeholder="Tapez le nom ou numéro de série (ex: Pikachu, s8b 222)"
+                                       autocomplete="off">
+                                <div id="cardSearchResults" class="card-search-results" style="display: none;"></div>
+                                <div id="selectedCardPreview" class="selected-card-preview" style="display: none;"></div>
+                            </div>
+                            <small class="form-help">💡 Tapez au moins 2 caractères pour voir les suggestions de cartes avec images</small>
+                            
+                            <!-- Boutons d'action pour les cartes -->
+                            <div class="card-actions" style="margin-top: 1rem;">
+                                <button type="button" id="addCardBtn" class="btn-add-card" onclick="addCardToList()" disabled>
+                                    ➕ Ajouter cette carte
+                                </button>
+                                <span id="cardCounter" class="card-counter">0 carte(s) ajoutée(s)</span>
+                                <span id="totalPrice" class="total-price" style="margin-left: 12px; color: #003d82; font-weight: 800; display: none;">💰 Total: 0€</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Provenance de la carte -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">🛒 Provenance de la Carte</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="cardSource" value="website" required>
+                                <div class="radio-card">
+                                    <h4>🌐 Site Web</h4>
+                                    <p>Carte achetée sur notre boutique</p>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="cardSource" value="live_stream" required>
+                                <div class="radio-card">
+                                    <h4>📺 Live Stream</h4>
+                                    <p>Achat en direct (Whatnot, etc.)</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Champs conditionnels pour site web -->
+                        <div id="websiteFields" class="conditional-fields">
+                            <div class="form-group">
+                                <label class="form-label" for="orderNumber">Numéro de commande *</label>
+                                <input type="text" id="orderNumber" name="orderNumber" class="form-input" placeholder="Ex: #1001, ORD123456">
+                            </div>
+                        </div>
+
+                        <!-- Champs conditionnels pour live stream -->
+                        <div id="liveStreamFields" class="conditional-fields">
+                            <div class="form-group">
+                                <label class="form-label" for="liveDate">Date du live *</label>
+                                <input type="date" id="liveDate" name="liveDate" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="whatnotUsername">Pseudo Whatnot *</label>
+                                <input type="text" id="whatnotUsername" name="whatnotUsername" class="form-input" placeholder="Votre nom d'utilisateur Whatnot">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="whatnotOrderNumber">Numéro de commande Whatnot</label>
+                                <input type="text" id="whatnotOrderNumber" name="whatnotOrderNumber" class="form-input" placeholder="Référence de commande Whatnot (si disponible)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Upload d'image -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">📷 Image de la Carte (Optionnel)</h3>
+                        <div class="upload-zone" onclick="document.getElementById('cardImage').click()">
+                            <div class="upload-icon">📸</div>
+                            <div class="upload-text">Cliquez pour uploader une image</div>
+                            <div class="upload-subtext">PNG, JPG jusqu'à 10MB</div>
+                        </div>
+                        <input type="file" id="cardImage" name="cardImage" class="file-input" accept="image/*">
+                        <div id="imagePreview" style="display: none; margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- Section 4: Commentaires -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">💭 Informations Additionnelles</h3>
+                        <div class="form-group">
+                            <label class="form-label" for="comments">Commentaires et demandes spéciales</label>
+                            <textarea id="comments" name="comments" class="form-textarea" placeholder="État de la carte, demandes spéciales, informations importantes..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Section 5: Option de paiement -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">💳 Option de Paiement</h3>
+                        <div class="radio-group" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="radio-option">
+                                <input type="radio" id="payNow" name="paymentOption" value="pay_now" checked>
+                                <label for="payNow" class="radio-card">
+                                    <div style="font-size: 2rem; margin-bottom: 10px;">⚡</div>
+                                    <div style="font-weight: 700; color: #003d82; margin-bottom: 5px;">Payer maintenant</div>
+                                    <div style="font-size: 0.9rem; color: #666;">Redirection immédiate vers le paiement sécurisé</div>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="payLater" name="paymentOption" value="pay_later">
+                                <label for="payLater" class="radio-card">
+                                    <div style="font-size: 2rem; margin-bottom: 10px;">📧</div>
+                                    <div style="font-weight: 700; color: #003d82; margin-bottom: 5px;">Payer plus tard</div>
+                                    <div style="font-size: 0.9rem; color: #666;">Recevoir les détails par email</div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Explication des options -->
+                        <div id="paymentExplanation" style="margin-top: 1.5rem; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 4px solid #667eea;">
+                            <div id="payNowExplanation" style="display: block;">
+                                <strong>⚡ Paiement immédiat :</strong> 
+                                <span style="color: #666;">Après validation de votre demande, vous serez automatiquement redirigé vers notre système de paiement sécurisé pour finaliser votre commande.</span>
+                            </div>
+                            <div id="payLaterExplanation" style="display: none;">
+                                <strong>📧 Paiement différé :</strong> 
+                                <span style="color: #666;">Votre demande sera enregistrée et vous recevrez un email avec tous les détails et un lien de paiement sécurisé que vous pourrez utiliser quand vous le souhaitez.</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submitButton">
+                        🚀 Envoyer la demande PSA
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Service de Gradation PSA - Service professionnel de gradation Pokémon</p>
+            <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8; line-height: 1.6;">
+                <p><strong>Mentions légales :</strong> PSA® est une marque déposée de Professional Sports Authenticator. Nous proposons un service d'accompagnement pour la gradation PSA mais ne sommes pas directement affiliés à PSA.</p>
+                <p>Service professionnel de préparation, envoi et suivi pour gradation PSA. Assurance et expédition sécurisée incluses.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Action Links -->
+    <a href="/admin" class="admin-link">🛠️ Admin</a>
+    <a href="/status" class="admin-link" style="bottom: 90px; background: linear-gradient(135deg, #28a745, #20c997);">🔍 Suivi</a>
+
+    <!-- Clean PSA Modal System -->
+    <script defer>
+        // ===== GLOBAL STATE =====
+        let selectedServiceType = '';
+        let selectedCard = null;
+        let addedCards = [];
+        let cardSearchResults = [];
+
+        // ===== PSA SERVICES CONFIGURATION =====
+        const psaServices = {
+            'value-bulk': { name: 'PSA Value Bulk', duration: '≈ 65 jours ouvrés', icon: '💰', price: 20 },
+            'value': { name: 'PSA Value', duration: '≈ 45 jours ouvrés', icon: '💎', price: 27 },
+            'value-plus': { name: 'PSA Value Plus', duration: '≈ 20 jours ouvrés', icon: '⚡', price: 40 },
+            'regular': { name: 'PSA Regular', duration: '≈ 10 jours ouvrés', icon: '🚀', price: 60 },
+            'xp': { name: 'PSA XP', duration: '≈ 10 jours ouvrés', icon: '⭐', price: 100 },
+            'super-xp': { name: 'PSA Super XP', duration: '≈ 10 jours ouvrés', icon: '🌟', price: 150 },
+            'wt': { name: 'PSA WT (Walk Through)', duration: '≈ 10 jours ouvrés', icon: '👑', price: 200 },
+            'premium-1': { name: 'PSA Premium 1', duration: '≈ 10 jours ouvrés', icon: '💍', price: 300 },
+            'premium-2': { name: 'PSA Premium 2', duration: '≈ 10 jours ouvrés', icon: '💎💎', price: 500 },
+            'premium-3': { name: 'PSA Premium 3', duration: '≈ 10 jours ouvrés', icon: '👑💎', price: 750 },
+            'premium-5': { name: 'PSA Premium 5', duration: '≈ 10 jours ouvrés', icon: '🏆', price: 1000 },
+            'premium-10': { name: 'PSA Premium 10', duration: '≈ 10 jours ouvrés', icon: '🏆👑', price: 2000 }
+        };
+
+        // ===== CLEAN INITIALIZATION SYSTEM =====
+        const initPSA = () => {
+            if (window.__inited) return;
+            window.__inited = true;
+            
+            // ===== MODAL IMPLEMENTATION =====
+            const openInlineModal = (serviceType) => {
+                selectedServiceType = serviceType;
+                const modal = document.getElementById('psaModal');
+                const serviceInfo = document.getElementById('selectedServiceInfo');
+                const service = psaServices[serviceType];
+                
+                if (service && serviceInfo) {
+                    serviceInfo.textContent = `${service.icon} ${service.name} (${service.duration}) - ${service.price}€/carte`;
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                    
+                    if (typeof updateTotalPriceDisplay === 'function') {
+                        updateTotalPriceDisplay();
+                    }
+                }
+            };
+            
+            const closeInlineModal = () => {
+                const modal = document.getElementById('psaModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    const form = document.getElementById('psaForm');
+                    if (form) form.reset();
+                    if (typeof hideConditionalFields === 'function') hideConditionalFields();
+                }
+            };
+
+            // ===== CONNECT TO GLOBAL STUB =====
+            window.__openModalImpl = openInlineModal;
+            window.__closeModalImpl = closeInlineModal;
+            
+            // ===== EVENT DELEGATION FOR MODAL BUTTONS =====
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('.plan-button, [onclick*="openModal"]');
+                if (btn) {
+                    const serviceType = btn.getAttribute('onclick')?.match(/openModal\('([^']+)'\)/)?.[1] ||
+                                     btn.dataset.plan || btn.value;
+                    if (serviceType && window.openModal) {
+                        e.preventDefault();
+                        window.openModal(serviceType);
+                    }
+                }
+            });
+            
+            // ===== PARTICLE SYSTEM =====
+            const createParticles = () => {
+                const particles = document.getElementById('particles');
+                if (!particles) return;
+                
+                const pokemonEmojis = ['⚡', '🔥', '💧', '🌿', '❄️', '👊', '💜', '🧠', '🪨', '✈️', '🐛', '👻', '🐉', '🌙', '⚡', '🧚'];
+                
+                for (let i = 0; i < 15; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.textContent = pokemonEmojis[Math.floor(Math.random() * pokemonEmojis.length)];
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 6 + 's';
+                    particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                    particles.appendChild(particle);
+                }
+            };
+            
+            // Initialize particles and form handlers
+            createParticles();
+            setupFormHandlers();
+            setupFAQHandlers();
+            
+        };
+
+        // ===== FAQ EVENT HANDLERS =====
+        const setupFAQHandlers = () => {
+            document.querySelectorAll('[data-faq-toggle]').forEach(faqQuestion => {
+                faqQuestion.addEventListener('click', function() {
+                    toggleFaq(this);
+                });
+            });
+        };
+
+        // ===== FORM EVENT HANDLERS =====
+        const setupFormHandlers = () => {
+            
+            // Card source conditional fields
+            const radioButtons = document.querySelectorAll('input[name="cardSource"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', showConditionalFields);
+            });
+            
+            // Payment option explanations
+            const paymentOptions = document.querySelectorAll('input[name="paymentOption"]');
+            paymentOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    const payNowExplanation = document.getElementById('payNowExplanation');
+                    const payLaterExplanation = document.getElementById('payLaterExplanation');
+                    
+                    if (this.value === 'pay_now') {
+                        payNowExplanation.style.display = 'block';
+                        payLaterExplanation.style.display = 'none';
+                    } else {
+                        payNowExplanation.style.display = 'none';
+                        payLaterExplanation.style.display = 'block';
+                    }
+                });
+            });
+            
+            // Card search
+            const cardNameInput = document.getElementById('cardName');
+            if (cardNameInput) {
+                let searchTimeout;
+                cardNameInput.addEventListener('input', function(e) {
+                    clearTimeout(searchTimeout);
+                    const query = e.target.value.trim();
+                    
+                    if (query !== selectedCard?.name) {
+                        clearCardSelection();
+                    }
+                    
+                    searchTimeout = setTimeout(() => {
+                        searchCards(query);
+                    }, 300);
+                });
+            }
+            
+            // Image upload
+            const cardImage = document.getElementById('cardImage');
+            if (cardImage) {
+                cardImage.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const preview = document.getElementById('imagePreview');
+                            if (preview) {
+                                preview.src = e.target.result;
+                                preview.style.display = 'block';
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Form submission
+            const psaForm = document.getElementById('psaForm');
+            if (psaForm) {
+                psaForm.addEventListener('submit', handleFormSubmission);
+            }
+            
+            // Modal closing events
+            const psaModal = document.getElementById('psaModal');
+            if (psaModal) {
+                psaModal.addEventListener('click', function(e) {
+                    if (e.target === this && window.__closeModalImpl) window.__closeModalImpl();
+                });
+            }
+            
+            // Escape key to close modal
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && window.__closeModalImpl) window.__closeModalImpl();
+            });
+            
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.card-search-container')) {
+                    const cardResults = document.getElementById('cardSearchResults');
+                    if (cardResults) cardResults.style.display = 'none';
+                }
+            });
+        };
+
+        // ===== CARD SEARCH FUNCTIONS =====
+        async function searchCards(query) {
+            
+            if (query.length < 2) {
+                const cardResults = document.getElementById('cardSearchResults');
+                if (cardResults) cardResults.style.display = 'none';
+                return;
+            }
+
+            try {
+                // ✅ FIX 1: Correct URL with limit parameter and headers
+                const response = await fetch(`/api/public/cards/search?q=${encodeURIComponent(query)}&limit=20`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                // ✅ FIX 2: Proper HTTP error handling with detailed logging
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error('[PSA] ❌ Search HTTP error:', response.status, text);
+                    const cardResults = document.getElementById('cardSearchResults');
+                    if (cardResults) {
+                        cardResults.innerHTML = '<div class="error-message">⚠️ Erreur de connexion au serveur</div>';
+                        cardResults.style.display = 'block';
+                    }
+                    return;
+                }
+                
+                // ✅ FIX 3: Robust JSON parsing with multiple fallbacks
+                const data = await response.json();
+                
+                const cards = data.cards || data.results || data.data?.cards || [];
+                
+                // ✅ FIX 4: Debug logging with card details
+                
+                cardSearchResults = cards;
+                displayCardResults(cards);
+                
+            } catch (error) {
+                // ✅ FIX 5: Better error logging and handling
+                console.error('[PSA] ❌ Erreur lors de la recherche:', error?.message || error);
+                const cardResults = document.getElementById('cardSearchResults');
+                if (cardResults) {
+                    cardResults.innerHTML = '<div class="error-message">⚠️ Erreur lors de la recherche de cartes</div>';
+                    cardResults.style.display = 'block';
+                }
+            }
+        }
+
+        function displayCardResults(cards) {
+            const resultsContainer = document.getElementById('cardSearchResults');
+            if (!resultsContainer) return;
+            
+            if (cards.length === 0) {
+                resultsContainer.innerHTML = '<div class="no-results">🔍 Aucune carte trouvée</div>';
+                resultsContainer.style.display = 'block';
+                return;
+            }
+
+            const cardsHTML = cards.map((card, index) => `
+                <div class="card-search-item" onclick="selectCard(${index})">
+                    <img src="${card.image || '/placeholder-pokemon-card.png'}" 
+                         alt="${card.name}" 
+                         class="card-image-thumb"
+                         onerror="this.src='/placeholder-pokemon-card.png';">
+                    <div class="card-info">
+                        <div class="card-name">🎴 ${card.name}</div>
+                        <div class="card-series">📦 ${card.series || 'Série inconnue'}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            resultsContainer.innerHTML = cardsHTML;
+            resultsContainer.style.display = 'block';
+        }
+
+        function selectCard(cardIndex) {
+            selectedCard = cardSearchResults[cardIndex];
+            const cardNameInput = document.getElementById('cardName');
+            if (cardNameInput) cardNameInput.value = selectedCard.name;
+            
+            const cardResults = document.getElementById('cardSearchResults');
+            if (cardResults) cardResults.style.display = 'none';
+            
+            // Show card preview
+            const preview = document.getElementById('selectedCardPreview');
+            const previewImage = document.getElementById('selectedCardImage');
+            const previewName = document.getElementById('selectedCardName');
+            const previewSeries = document.getElementById('selectedCardSeries');
+            
+            if (preview && previewImage && previewName && previewSeries) {
+                if (selectedCard.image) {
+                    previewImage.src = selectedCard.image;
+                    previewImage.style.display = 'block';
+                } else {
+                    previewImage.style.display = 'none';
+                }
+                
+                previewName.textContent = selectedCard.name;
+                previewSeries.textContent = selectedCard.series || 'Série inconnue';
+                preview.style.display = 'block';
+            }
+            
+            updateAddCardButton();
+        }
+
+        function clearCardSelection() {
+            selectedCard = null;
+            const preview = document.getElementById('selectedCardPreview');
+            const cardResults = document.getElementById('cardSearchResults');
+            if (preview) preview.style.display = 'none';
+            if (cardResults) cardResults.style.display = 'none';
+            updateAddCardButton();
+        }
+
+        // ===== CONDITIONAL FIELDS =====
+        function showConditionalFields() {
+            const selectedSource = document.querySelector('input[name="cardSource"]:checked')?.value;
+            const websiteFields = document.getElementById('websiteFields');
+            const liveStreamFields = document.getElementById('liveStreamFields');
+
+            hideConditionalFields();
+
+            if (selectedSource === 'website' && websiteFields) {
+                websiteFields.classList.add('active');
+                const orderNumber = document.getElementById('orderNumber');
+                if (orderNumber) orderNumber.required = true;
+            } else if (selectedSource === 'live_stream' && liveStreamFields) {
+                liveStreamFields.classList.add('active');
+                const liveDate = document.getElementById('liveDate');
+                const whatnotUsername = document.getElementById('whatnotUsername');
+                if (liveDate) liveDate.required = true;
+                if (whatnotUsername) whatnotUsername.required = true;
+            }
+        }
+
+        function hideConditionalFields() {
+            const websiteFields = document.getElementById('websiteFields');
+            const liveStreamFields = document.getElementById('liveStreamFields');
+            const orderNumber = document.getElementById('orderNumber');
+            const liveDate = document.getElementById('liveDate');
+            const whatnotUsername = document.getElementById('whatnotUsername');
+            
+            if (websiteFields) websiteFields.classList.remove('active');
+            if (liveStreamFields) liveStreamFields.classList.remove('active');
+            if (orderNumber) orderNumber.required = false;
+            if (liveDate) liveDate.required = false;
+            if (whatnotUsername) whatnotUsername.required = false;
+        }
+
+        // ===== CARD MANAGEMENT =====
+        function updateAddCardButton() {
+            const addBtn = document.getElementById('addCardBtn');
+            if (addBtn) {
+                if (selectedCard && !isCardAlreadyAdded(selectedCard)) {
+                    addBtn.disabled = false;
+                    addBtn.style.opacity = '1';
+                } else {
+                    addBtn.disabled = true;
+                    addBtn.style.opacity = '0.5';
+                }
+            }
+        }
+
+        function isCardAlreadyAdded(card) {
+            return addedCards.some(addedCard => 
+                addedCard.name === card.name && addedCard.series === card.series
+            );
+        }
+
+        function addCardToList() {
+            if (!selectedCard || isCardAlreadyAdded(selectedCard)) return;
+
+            addedCards.push({
+                id: Date.now(),
+                name: selectedCard.name,
+                series: selectedCard.series,
+                image: selectedCard.image
+            });
+
+            updateCardsDisplay();
+            updateCardCounter();
+            updateTotalPriceDisplay();
+
+            clearCardSelection();
+            const cardNameInput = document.getElementById('cardName');
+            if (cardNameInput) cardNameInput.value = '';
+            updateAddCardButton();
+        }
+
+        function removeCardFromList(cardId) {
+            addedCards = addedCards.filter(card => card.id !== cardId);
+            updateCardsDisplay();
+            updateCardCounter();
+            updateTotalPriceDisplay();
+            updateAddCardButton();
+        }
+
+        function updateCardsDisplay() {
+            const cardsContainer = document.getElementById('cardsContainer');
+            const addedCardsList = document.getElementById('addedCardsList');
+
+            if (!cardsContainer || !addedCardsList) return;
+
+            if (addedCards.length === 0) {
+                addedCardsList.style.display = 'none';
+                return;
+            }
+
+            addedCardsList.style.display = 'block';
+
+            const cardsHTML = addedCards.map(card => {
+                const imageUrl = card.image || '/placeholder-pokemon-card.png';
+                return `
+                    <div class="added-card-item">
+                        <img src="${imageUrl}" alt="${card.name}" class="added-card-image"
+                             onerror="this.src='/placeholder-pokemon-card.png';">
+                        <div class="added-card-details">
+                            <div class="added-card-name">🎴 ${card.name}</div>
+                            <div class="added-card-series">📦 ${card.series || 'Série inconnue'}</div>
+                        </div>
+                        <button type="button" class="btn-remove-card" onclick="removeCardFromList(${card.id})">
+                            🗑️ Supprimer
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            cardsContainer.innerHTML = cardsHTML;
+        }
+
+        function updateCardCounter() {
+            const counter = document.getElementById('cardCounter');
+            if (counter) {
+                const count = addedCards.length;
+                counter.textContent = `${count} carte(s) ajoutée(s)`;
+            }
+        }
+
+        function calculateTotalPrice() {
+            if (!selectedServiceType || !psaServices[selectedServiceType]?.price) return 0;
+            return addedCards.length * psaServices[selectedServiceType].price;
+        }
+
+        function updateTotalPriceDisplay() {
+            const totalPriceElement = document.getElementById('totalPrice');
+            if (!totalPriceElement) return;
+
+            const totalPrice = calculateTotalPrice();
+            
+            if (addedCards.length > 0 && selectedServiceType) {
+                totalPriceElement.style.display = 'inline';
+                totalPriceElement.innerHTML = `💰 Total: <strong>${totalPrice}€</strong>`;
+            } else {
+                totalPriceElement.style.display = 'none';
+            }
+        }
+
+        function validateMultipleCards() {
+            if (addedCards.length === 0) {
+                alert('⚠️ Veuillez ajouter au moins une carte à votre demande.');
+                const cardNameInput = document.getElementById('cardName');
+                if (cardNameInput) cardNameInput.focus();
+                return false;
+            }
+            return true;
+        }
+
+        // ===== FORM SUBMISSION =====
+        async function handleFormSubmission(e) {
+            e.preventDefault();
+
+            if (!validateMultipleCards()) return;
+
+            const submitButton = document.getElementById('submitButton');
+            const originalText = submitButton?.textContent;
+            
+            try {
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = '⏳ Envoi en cours...';
+                }
+                
+                const formData = new FormData(e.target);
+                
+                // ✅ CRITICAL FIX: Map frontend data to backend expected format
+                // Backend expects: customerEmail, grading_type, cardSource, etc.
+                formData.set('grading_type', selectedServiceType);  // Map serviceType → grading_type
+                formData.set('total_cards', addedCards.length);     // Map cardCount → total_cards
+                
+                // Add multi-cards data in backend expected format
+                addedCards.forEach((card, index) => {
+                    formData.set(`cards[${index}][name]`, card.name || '');
+                    formData.set(`cards[${index}][series]`, card.series || '');
+                    formData.set(`cards[${index}][image]`, card.image || '');
+                });
+                
+                // Ensure customerEmail field is properly named
+                const email = formData.get('customerEmail') || formData.get('email');
+                if (email) {
+                    formData.set('customerEmail', email);
+                }
+                
+                // Debug logging for troubleshooting
+                console.log('[PSA] Form submission:', {
+                    grading_type: selectedServiceType,
+                    total_cards: addedCards.length,
+                    cards: addedCards,
+                    customerEmail: email
+                });
+
+                const response = await fetch('/api/public/submit-grading', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // ✅ CRITICAL FIX: Proper HTTP error handling
+                if (!response.ok) {
+                    let errorMessage = `Erreur HTTP ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.error || errorMessage;
+                    } catch (jsonError) {
+                        const errorText = await response.text();
+                        errorMessage = errorText || errorMessage;
+                    }
+                    console.error('[PSA] ❌ HTTP Error:', response.status, errorMessage);
+                    throw new Error(errorMessage);
+                }
+
+                const result = await response.json();
+
+                if (result.success !== false) {
+                    const paymentOption = formData.get('paymentOption');
+                    
+                    if (paymentOption === 'pay_now' && result.paymentUrl) {
+                        alert('✅ Demande envoyée ! Redirection vers le paiement...');
+                        window.location.href = result.paymentUrl;
+                    } else {
+                        alert('✅ Demande PSA envoyée avec succès ! Vous recevrez un email de confirmation.');
+                        window.__closeModalImpl();
+                        e.target.reset();
+                        clearCardSelection();
+                        addedCards = [];
+                        updateCardsDisplay();
+                        updateCardCounter();
+                        updateTotalPriceDisplay();
+                    }
+                } else {
+                    throw new Error(result.message || result.error || 'Erreur lors de l\'envoi');
+                }
+            } catch (error) {
+                console.error('[PSA] ❌ Submission error:', error);
+                const errorMessage = error.message || error.toString() || 'Erreur inconnue lors de l\'envoi';
+                alert(`❌ ${errorMessage}. Veuillez réessayer ou contactez le support.`);
+            } finally {
+                if (submitButton && originalText) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
+                }
+            }
+        }
+
+        // ===== FAQ TOGGLE FUNCTION =====
+        function toggleFaq(element) {
+            try {
+                const faqItem = element.closest('.faq-item');
+                if (!faqItem) return;
+                
+                const answer = faqItem.querySelector('.faq-answer');
+                const toggle = faqItem.querySelector('.faq-toggle');
+                
+                if (!answer) return;
+                
+                // Close all other FAQ items first
+                document.querySelectorAll('.faq-item.active').forEach(item => {
+                    if (item !== faqItem) {
+                        item.classList.remove('active');
+                        const otherAnswer = item.querySelector('.faq-answer');
+                        const otherToggle = item.querySelector('.faq-toggle');
+                        if (otherAnswer) otherAnswer.style.maxHeight = '0';
+                        if (otherToggle) otherToggle.textContent = '+';
+                    }
+                });
+                
+                // Toggle current FAQ item
+                if (faqItem.classList.contains('active')) {
+                    faqItem.classList.remove('active');
+                    answer.style.maxHeight = '0';
+                    if (toggle) toggle.textContent = '+';
+                } else {
+                    faqItem.classList.add('active');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    if (toggle) toggle.textContent = '−';
+                }
+            } catch (error) {
+                console.error('[FAQ] Error toggling FAQ:', error);
+            }
+        }
+
+        // ===== IMMEDIATE GLOBAL FUNCTION EXPOSURE =====
+        window.addCardToList = addCardToList;
+        window.removeCardFromList = removeCardFromList;
+        window.selectCard = selectCard;
+        window.clearCardSelection = clearCardSelection;
+        window.showConditionalFields = showConditionalFields;
+        window.hideConditionalFields = hideConditionalFields;
+        window.updateTotalPriceDisplay = updateTotalPriceDisplay;
+        window.toggleFaq = toggleFaq;
+        
+        // ===== EMERGENCY FALLBACK FOR TOGGLE FAQ =====
+        if (!window.toggleFaq) {
+            window.toggleFaq = toggleFaq;
+        }
+
+        // ===== ARCHITECT SOLUTION: TRIPLE INITIALIZATION =====
+        
+        // 1. Immediate initialization if DOM is ready
+        if (document.readyState !== 'loading') {
+            initPSA();
+        }
+        
+        // 2. DOMContentLoaded fallback
+        window.addEventListener('DOMContentLoaded', () => {
+            initPSA();
+        });
+        
+        // 3. Load event fallback
+        window.addEventListener('load', () => {
+            initPSA();
+        });
+        
+        // ===== ARCHITECT SOLUTION: WATCHDOG FALLBACK =====
+        setTimeout(() => {
+            if (!window.__openModalImpl) {
+                console.warn('[PSA] ⚠️ WATCHDOG: __openModalImpl not found after 2s, force initializing...');
+                initPSA();
+            } else {
+            }
+        }, 2000);
+        
+    </script>
+</body>
+</html>
