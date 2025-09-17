@@ -1,0 +1,461 @@
+# ===============================================
+# DOCKER COMPOSE - PRODUCTION
+# PSA GRADING APP - Configuration de production
+# ===============================================
+# 🏭 Configuration production haute performance
+# 🔒 Sécurité maximale avec secrets management
+# 📊 Monitoring complet et haute disponibilité
+
+version: '3.8'
+
+# ===============================================
+# SERVICES PRODUCTION
+# ===============================================
+services:
+  # ===============================================
+  # APPLICATION PSA GRADING (CLUSTER)
+  # ===============================================
+  app:
+    image: ${DOCKER_IMAGE:-ghcr.io/psa-grading/psa-grading-app:latest}
+    
+    # Déploiement en cluster pour HA
+    deploy:
+      replicas: 2
+      
+      # Stratégie de mise à jour rolling
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        
+      # Contraintes de placement
+      placement:
+        constraints:
+          - node.role == worker
+          
+      # Ressources garanties
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+          
+      # Restart policy
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 300s
+    
+    environment:
+      # Configuration production
+      - NODE_ENV=production
+      - PORT=5000
+      
+      # Base de données externe sécurisée
+      - DATABASE_URL=${PRODUCTION_DATABASE_URL}
+      - DB_SSL=true
+      - DB_SSL_REJECT_UNAUTHORIZED=true
+      - DB_POOL_MIN=10
+      - DB_POOL_MAX=30
+      
+      # Secrets critiques production
+      - ADMIN_PASSWORD=${PRODUCTION_ADMIN_PASSWORD}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - PSA_SECRET=${PSA_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - PSA_CLIENT_SECRET=${PSA_CLIENT_SECRET}
+      
+      # Configuration domaine production
+      - ALLOWED_ORIGINS=https://${DOMAIN},https://www.${DOMAIN}
+      - PUBLIC_URL=https://${DOMAIN}
+      
+      # Services externes critiques
+      - BREVO_API_KEY=${BREVO_API_KEY}
+      - PSA_EMAIL=${PSA_EMAIL}
+      - PSA_PASSWORD=${PSA_PASSWORD}
+      
+      # Sécurité production
+      - TRUST_PROXY=true
+      - SECURITY_HEADERS=true
+      - ENABLE_COMPRESSION=true
+      - COMPRESSION_LEVEL=6
+      
+      # Performance production
+      - MAX_UPLOAD_SIZE=50
+      - RATE_LIMIT_MAX=1000
+      - RATE_LIMIT_WINDOW=900000
+      - REQUEST_TIMEOUT=30000
+      - STATIC_CACHE_MAX_AGE=31536000
+      
+      # Logging production
+      - LOG_LEVEL=warn
+      - LOG_RETENTION_DAYS=30
+      - LOG_DIR=/app/logs
+      
+      # Monitoring critique
+      - ENABLE_METRICS=true
+      - METRICS_PORT=9090
+      - DEPLOYMENT_MODE=production
+      
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: ingress
+      - target: 9090
+        published: 9090
+        protocol: tcp
+        mode: ingress
+        
+    volumes:
+      # Uploads persistants avec backup
+      - psa_production_uploads:/app/uploads
+      - psa_production_logs:/app/logs
+      
+      # Certificats SSL production
+      - /etc/ssl/certs:/etc/ssl/certs:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      
+    networks:
+      - psa-production-network
+      - monitoring-network
+    
+    # Health check critique production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:5000/healthz"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
+      
+    # Logging production optimisé
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+        compress: "true"
+        labels: "service=psa-app,environment=production"
+
+  # ===============================================
+  # LOAD BALANCER NGINX PRODUCTION
+  # ===============================================
+  nginx:
+    image: nginx:alpine
+    
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 30s
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: ingress
+      - target: 443  
+        published: 443
+        protocol: tcp
+        mode: ingress
+        
+    volumes:
+      # Configuration Nginx production
+      - ./docker/nginx/production.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl.conf:/etc/nginx/conf.d/ssl.conf:ro
+      
+      # Certificats SSL Let's Encrypt
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:rw
+      
+      # Cache Nginx
+      - psa_production_nginx_cache:/var/cache/nginx
+      
+      # Logs centralisés
+      - psa_production_nginx_logs:/var/log/nginx
+      
+    networks:
+      - psa-production-network
+      
+    # Health check Nginx
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      
+    # Dépendances critiques
+    depends_on:
+      - app
+
+  # ===============================================
+  # MONITORING PROMETHEUS PRODUCTION
+  # ===============================================
+  prometheus:
+    image: prom/prometheus:latest
+    
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    
+    ports:
+      - target: 9090
+        published: 9091
+        protocol: tcp
+        mode: ingress
+        
+    volumes:
+      # Configuration Prometheus
+      - ./docker/prometheus/production.yml:/etc/prometheus/prometheus.yml:ro
+      - ./docker/prometheus/rules:/etc/prometheus/rules:ro
+      
+      # Données persistantes
+      - psa_production_prometheus_data:/prometheus
+      
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--storage.tsdb.retention.size=10GB'
+      - '--web.enable-lifecycle'
+      
+    networks:
+      - monitoring-network
+      
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===============================================
+  # ALERTMANAGER PRODUCTION
+  # ===============================================
+  alertmanager:
+    image: prom/alertmanager:latest
+    
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    
+    ports:
+      - target: 9093
+        published: 9093
+        protocol: tcp
+        mode: ingress
+        
+    volumes:
+      - ./docker/alertmanager/production.yml:/etc/alertmanager/alertmanager.yml:ro
+      - psa_production_alertmanager_data:/alertmanager
+      
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=https://${DOMAIN}/alertmanager'
+      
+    networks:
+      - monitoring-network
+
+  # ===============================================
+  # GRAFANA PRODUCTION
+  # ===============================================
+  grafana:
+    image: grafana/grafana:latest
+    
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    environment:
+      # Configuration sécurisée Grafana
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_SECRET_KEY=${GRAFANA_SECRET_KEY}
+      - GF_SERVER_ROOT_URL=https://${DOMAIN}/grafana
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
+      
+    ports:
+      - target: 3000
+        published: 3001
+        protocol: tcp
+        mode: ingress
+        
+    volumes:
+      # Configuration et dashboards
+      - psa_production_grafana_data:/var/lib/grafana
+      - ./docker/grafana/production/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./docker/grafana/production/datasources:/etc/grafana/provisioning/datasources:ro
+      
+    networks:
+      - monitoring-network
+      
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===============================================
+  # BACKUP AUTOMATISÉ
+  # ===============================================
+  backup:
+    image: postgres:15-alpine
+    
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: none
+        
+    environment:
+      - DATABASE_URL=${PRODUCTION_DATABASE_URL}
+      - BACKUP_RETENTION_DAYS=30
+      - S3_BUCKET=${BACKUP_S3_BUCKET}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      
+    volumes:
+      - ./scripts/backup:/scripts:ro
+      - psa_production_backups:/backups
+      
+    command: >
+      sh -c "
+      while true; do
+        sleep 86400;
+        /scripts/backup-database.sh;
+      done
+      "
+      
+    networks:
+      - psa-production-network
+
+# ===============================================
+# VOLUMES PRODUCTION
+# ===============================================
+volumes:
+  # Application
+  psa_production_uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/storage/psa/uploads
+      
+  psa_production_logs:
+    driver: local
+    driver_opts:
+      type: none  
+      o: bind
+      device: /mnt/storage/psa/logs
+      
+  # Nginx
+  psa_production_nginx_cache:
+    driver: local
+    
+  psa_production_nginx_logs:
+    driver: local
+    
+  # Monitoring
+  psa_production_prometheus_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind  
+      device: /mnt/storage/monitoring/prometheus
+      
+  psa_production_grafana_data:
+    driver: local
+    
+  psa_production_alertmanager_data:
+    driver: local
+    
+  # Backup
+  psa_production_backups:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/storage/backups
+
+# ===============================================
+# RÉSEAUX PRODUCTION
+# ===============================================
+networks:
+  # Réseau application principal
+  psa-production-network:
+    driver: overlay
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/16
+    
+  # Réseau monitoring isolé  
+  monitoring-network:
+    driver: overlay
+    attachable: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.23.0.0/16
+
+# ===============================================
+# SECRETS (optionnel avec Docker Swarm)
+# ===============================================
+secrets:
+  database_url:
+    external: true
+    
+  admin_password:
+    external: true
+    
+  brevo_api_key:
+    external: true

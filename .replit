@@ -1,0 +1,49 @@
+modules = ["nodejs-20", "postgresql-16"]
+[agent]
+expertMode = true
+integrations = ["replitmail:1.0.0"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "PSA Grading Shopify App"
+
+[[workflows.workflow]]
+name = "PSA Grading Shopify App"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 32971
+externalPort = 3001
+
+[[ports]]
+localPort = 34439
+externalPort = 3000
+
+[nix]
+channel = "stable-25_05"
+packages = ["glib", "gtk3", "alsa-lib", "chromium", "nss", "nspr"]
+
+[deployment]
+deploymentTarget = "vm"
+run = ["node", "server/index.js"]
+build = ["npm", "ci", "--production"]

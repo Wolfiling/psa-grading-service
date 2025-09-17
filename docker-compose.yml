@@ -1,0 +1,208 @@
+# ===============================================
+# DOCKER COMPOSE - DÉVELOPPEMENT
+# PSA GRADING APP - Configuration de base
+# ===============================================
+# 🛠️ Environnement de développement avec PostgreSQL
+# 🔄 Hot reload activé pour développement rapide
+# 📊 Volumes persistants pour données et développement
+
+version: '3.8'
+
+# ===============================================
+# SERVICES
+# ===============================================
+services:
+  # ===============================================
+  # APPLICATION PSA GRADING
+  # ===============================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+      args:
+        NODE_ENV: development
+        BUILD_DATE: ${BUILD_DATE:-$(date -u +'%Y-%m-%dT%H:%M:%SZ')}
+        VCS_REF: ${GITHUB_SHA:-local}
+    
+    container_name: psa-app-dev
+    
+    environment:
+      # Configuration application
+      - NODE_ENV=development
+      - PORT=5000
+      
+      # Base de données
+      - DATABASE_URL=postgresql://psa_user:psa_password@postgres:5432/psa_grading_dev
+      
+      # Secrets (à définir dans .env.local)
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-dev123!}
+      - SESSION_SECRET=${SESSION_SECRET:-dev_session_secret_1234567890}
+      - PSA_SECRET=${PSA_SECRET:-dev_psa_secret_1234567890}
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_1234567890}
+      - PSA_CLIENT_SECRET=${PSA_CLIENT_SECRET:-dev_client_secret_1234567890}
+      
+      # Configuration CORS pour développement
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5000,http://127.0.0.1:5000
+      - PUBLIC_URL=http://localhost:5000
+      
+      # Services externes (optionnels en dev)
+      - BREVO_API_KEY=${BREVO_API_KEY:-}
+      - PSA_EMAIL=${PSA_EMAIL:-}
+      - PSA_PASSWORD=${PSA_PASSWORD:-}
+      
+      # Configuration debug
+      - DEBUG=psa:*
+      - LOG_LEVEL=debug
+      
+    ports:
+      - "5000:5000"
+      
+    volumes:
+      # Code source pour hot reload
+      - ./server:/app/server
+      - ./client:/app/client  
+      - ./public:/app/public
+      
+      # Volumes persistants
+      - psa_uploads:/app/uploads
+      - psa_logs:/app/logs
+      
+      # Configuration (SECURITY: .env files excluded - use ENV vars only)
+      # - ./.env.local:/app/.env:ro # REMOVED FOR SECURITY
+      
+    depends_on:
+      postgres:
+        condition: service_healthy
+        
+    networks:
+      - psa-network
+      
+    restart: unless-stopped
+    
+    # Health check personnalisé
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ===============================================
+  # BASE DE DONNÉES POSTGRESQL
+  # ===============================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: psa-postgres-dev
+    
+    environment:
+      # Configuration PostgreSQL
+      - POSTGRES_DB=psa_grading_dev
+      - POSTGRES_USER=psa_user
+      - POSTGRES_PASSWORD=psa_password
+      
+      # Optimisations pour développement
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C
+      
+    ports:
+      - "5432:5432"
+      
+    volumes:
+      # Données persistantes
+      - psa_postgres_data:/var/lib/postgresql/data
+      
+      # Scripts d'initialisation (commented out - directory doesn't exist)
+      # - ./scripts/db:/docker-entrypoint-initdb.d:ro
+      
+      # Configuration PostgreSQL (removed - file doesn't exist, using defaults)
+      # - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      
+    networks:
+      - psa-network
+      
+    restart: unless-stopped
+    
+    # Health check
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U psa_user -d psa_grading_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+      
+    # Sécurité et performance
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c max_connections=100
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c work_mem=4MB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+
+  # ===============================================
+  # REDIS (OPTIONNEL) - Cache et sessions
+  # ===============================================
+  redis:
+    image: redis:7-alpine
+    container_name: psa-redis-dev
+    
+    command: >
+      redis-server
+      --save 60 1
+      --loglevel notice
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      
+    ports:
+      - "6379:6379"
+      
+    volumes:
+      - psa_redis_data:/data
+      
+    networks:
+      - psa-network
+      
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+# ===============================================
+# VOLUMES PERSISTANTS
+# ===============================================
+volumes:
+  # Données PostgreSQL
+  psa_postgres_data:
+    driver: local
+    
+  # Cache Redis  
+  psa_redis_data:
+    driver: local
+    
+  # Uploads application
+  psa_uploads:
+    driver: local
+    
+  # Logs application
+  psa_logs:
+    driver: local
+
+# ===============================================
+# RÉSEAU INTERNE
+# =============================================== 
+networks:
+  psa-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16

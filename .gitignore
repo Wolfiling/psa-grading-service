@@ -1,0 +1,359 @@
+# ===============================================
+# GITIGNORE - PSA GRADING APP
+# ===============================================
+# 🚫 Fichiers à exclure du versioning GitHub
+# 🔒 Protection des données sensibles et optimisation
+
+# ===============================================
+# 🔐 SÉCURITÉ CRITIQUE - SECRETS ET CLÉS
+# ===============================================
+# Variables d'environnement (JAMAIS versioner)
+.env
+.env.local
+.env.development
+.env.staging  
+.env.production
+.env.test
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Security-critical files - NEVER commit these
+cookies.txt
+admin_cookies.txt
+*.cookies
+session.txt
+auth_tokens.txt
+
+# Secrets et certificats
+secrets/
+certificates/
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Configuration locale sensible
+config/local.json
+config/production.json
+config/staging.json
+
+# ===============================================
+# 📦 NODE.JS ET NPM
+# ===============================================
+# Dépendances
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Cache npm/yarn
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Runtime
+*.pid
+*.seed
+*.pid.lock
+pids/
+
+# Coverage et tests
+coverage/
+.nyc_output/
+test-results/
+junit.xml
+
+# ===============================================
+# 🗄️ DONNÉES ET UPLOADS
+# ===============================================
+# Uploads utilisateur (sauf exemples)
+uploads/
+server/uploads/
+!uploads/.gitkeep
+!uploads/examples/
+
+# Submissions data
+submissions.json
+
+# Données temporaires
+data/
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Base de données locale
+*.sqlite
+*.sqlite3
+*.db
+
+# Backups
+backup/
+backups/
+*.sql
+*.dump
+
+# ===============================================
+# 📊 LOGS ET MONITORING
+# ===============================================
+# Fichiers de logs
+logs
+*.log
+log/
+server/logs/
+!logs/.gitkeep
+
+# Monitoring et métriques
+metrics/
+*.metrics
+
+# ===============================================
+# 🛠️ ENVIRONNEMENT DE DÉVELOPPEMENT
+# ===============================================
+# IDE et éditeurs
+.vscode/
+.idea/
+.sublime-*
+*.swp
+*.swo
+*~
+.vim/
+.netrwhist
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+Icon?
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.nfs*
+
+# ===============================================
+# 🚀 BUILD ET DÉPLOIEMENT
+# ===============================================
+# Build artifacts
+dist/
+build/
+out/
+
+# Frontend build
+client/dist/
+client/build/
+public/dist/
+
+# Cache build
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+
+# ===============================================
+# 🐳 DOCKER ET CONTENEURS
+# ===============================================
+# Docker volumes
+docker-data/
+docker-volumes/
+
+# Docker Compose overrides locaux
+docker-compose.override.yml
+docker-compose.local.yml
+
+# ===============================================
+# 🔧 CONFIGURATION SPÉCIFIQUE PSA GRADING
+# ===============================================
+# Cartes téléchargées (cache)
+cards/
+cards-cache/
+
+# QR codes générés (gardés en production)
+server/uploads/qr-codes/*.png
+!server/uploads/qr-codes/.gitkeep
+
+# Vidéos utilisateur (trop volumineuses pour Git)
+server/uploads/videos/**/*.webm
+server/uploads/videos/**/*.mp4
+!server/uploads/videos/.gitkeep
+
+# Cache PSA scraper
+psa-cache/
+scraper-cache/
+
+# Rapports temporaires
+artifacts/
+security_evidence_*.json
+security_final_log_*.txt
+security_final_validation_*.json
+
+# ===============================================
+# 📸 MÉDIAS ET ASSETS
+# ===============================================
+# Images utilisateur (trop volumineuses)
+uploads/images/
+uploads/photos/
+uploads/cards/
+
+# Gardons les assets essentiels
+!public/images/
+!client/src/assets/
+!public/shopify-psa-logo.png
+
+# Vidéos et médias lourds
+*.mp4
+*.avi
+*.mov
+*.webm
+*.mkv
+
+# ===============================================
+# 🧪 TESTS ET QUALITÉ
+# ===============================================
+# Coverage détaillé (gardons le résumé)
+coverage/lcov-report/
+coverage/tmp/
+
+# Cache ESLint
+.eslintcache
+.stylelintcache
+
+# Tests screenshots
+test-screenshots/
+e2e-screenshots/
+
+# ===============================================
+# ⚙️ OUTILS DE DÉVELOPPEMENT
+# ===============================================
+# PM2
+.pm2/
+ecosystem.config.local.js
+
+# Replit (si utilisé localement)
+.replit
+replit.nix
+
+# Nodemon
+nodemon-debug.log
+
+# Webpack
+.webpack/
+
+# ===============================================
+# 📦 PACKAGES ET ARCHIVES
+# ===============================================
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+*.dmg
+*.iso
+
+# ===============================================
+# 🔍 CONFIGURATION GITHUB LOCALE
+# ===============================================
+# GitHub CLI
+.github/config/
+
+# Actions runner (si self-hosted)
+_work/
+_actions/
+_temp/
+
+# ===============================================
+# 🚨 FICHIERS SENSIBLES SPÉCIFIQUES
+# ===============================================
+# Configuration OVH (versions locales)
+ecosystem.config.production.js
+GUIDE_DEPLOIEMENT_LOCAL.md
+
+# Scripts personnalisés (gardons les génériques)
+scripts/deploy-personal.sh
+scripts/backup-personal.sh
+
+# Configurations email locales
+email-config-local.json
+brevo-config-local.json
+
+# ===============================================
+# 💾 SAUVEGARDES ET ARCHIVES
+# ===============================================
+# Dumps base de données
+*.sql.gz
+db-dump-*.sql
+backup-*.tar.gz
+
+# Archives application
+app-backup-*.tar.gz
+psa-backup-*.zip
+
+# ===============================================
+# 🏭 PRODUCTION (à ne jamais versioner)
+# ===============================================
+# Artefacts production
+production-config.json
+production-secrets.json
+
+# SSL certificates production
+ssl/
+letsencrypt/
+
+# ===============================================
+# ✅ EXCEPTIONS (fichiers à GARDER)
+# ===============================================
+# Templates et exemples
+!.env.template
+!.env.*.template
+!.env.example
+
+# Configuration Docker publique
+!Dockerfile
+!docker-compose.yml
+!docker-compose.*.yml
+!.dockerignore
+
+# Scripts de déploiement génériques
+!scripts/deployment/
+!scripts/security/
+!scripts/monitoring/
+
+# Documentation
+!README.md
+!CHANGELOG.md
+!docs/
+
+# Configuration GitHub Actions
+!.github/workflows/
+!.github/ISSUE_TEMPLATE/
+!.github/PULL_REQUEST_TEMPLATE/
+
+# Configuration projet
+!package.json
+!package-lock.json
+!tsconfig.json
+!vite.config.js
+
+# Assets essentiels
+!public/css/
+!public/js/
+!client/src/

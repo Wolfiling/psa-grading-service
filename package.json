@@ -1,0 +1,93 @@
+{
+  "name": "psa-grading-app",
+  "version": "1.0.0",
+  "description": "Enterprise-grade PSA (Professional Sports Authenticator) grading service platform for Pokemon card authentication with video proof system, Shopify integration, and comprehensive admin dashboard.",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js",
+    "start": "NODE_ENV=production node server/index.js",
+    "build": "npm run build:client",
+    "build:client": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "security:validate": "node scripts/security_validation_e2e.js",
+    "security:validate-final": "node scripts/security_validation_final.js",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config vitest.integration.config.js",
+    "docker:build": "docker build -t psa-grading-app .",
+    "docker:dev": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "deploy:staging": "echo 'Use GitHub Actions for deployment'",
+    "deploy:production": "echo 'Use GitHub Actions for deployment'"
+  },
+  "dependencies": {
+    "@getbrevo/brevo": "^3.0.1",
+    "@shopify/polaris": "^12.0.0",
+    "@shopify/polaris-icons": "^8.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "axios": "^1.11.0",
+    "bcrypt": "^6.0.0",
+    "cheerio": "^1.1.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "csrf": "^3.1.0",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.1.0",
+    "express-session": "^1.18.2",
+    "file-type": "^21.0.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^6.9.7",
+    "pg": "^8.11.0",
+    "puppeteer": "^24.19.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "validator": "^13.15.15",
+    "vite": "^4.3.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.22",
+    "vitest": "^0.31.0"
+  },
+  "keywords": [
+    "psa-grading",
+    "pokemon-cards",
+    "card-authentication",
+    "video-proof",
+    "shopify-integration",
+    "admin-dashboard",
+    "express-api",
+    "react-frontend",
+    "postgresql",
+    "docker",
+    "github-actions",
+    "enterprise-security",
+    "qr-codes",
+    "email-notifications",
+    "task-master"
+  ],
+  "author": "PSA Grading Service",
+  "homepage": "https://github.com/yourusername/psa-grading-app#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/psa-grading-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/psa-grading-app/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,275 @@
+# ===============================================
+# GITATTRIBUTES - PSA GRADING APP
+# ===============================================
+# 🔧 Configuration des attributs Git pour gestion optimale des fichiers
+# 🚀 Optimisé pour workflow GitHub Actions et déploiement automatisé
+
+# ===============================================
+# 🌍 CONFIGURATION GLOBALE
+# ===============================================
+# Normalisation des fins de ligne (LF pour cohérence cross-platform)
+* text=auto eol=lf
+
+# ===============================================
+# 📝 FICHIERS TEXTE
+# ===============================================
+# Code source JavaScript/TypeScript
+*.js    text
+*.mjs   text  
+*.jsx   text
+*.ts    text
+*.tsx   text
+
+# Configuration et données
+*.json  text
+*.yaml  text
+*.yml   text
+*.toml  text
+*.ini   text
+*.cfg   text
+
+# Templates et environnement
+*.template  text
+.env.*      text
+Dockerfile* text
+
+# ===============================================
+# 🌐 WEB ET FRONTEND
+# ===============================================
+# HTML/CSS
+*.html  text diff=html
+*.htm   text diff=html
+*.css   text diff=css
+*.scss  text
+*.sass  text
+*.less  text
+
+# Webfonts
+*.woff2 binary
+*.woff  binary
+*.ttf   binary
+*.otf   binary
+*.eot   binary
+
+# ===============================================
+# 📊 DOCUMENTATION
+# ===============================================
+# Markdown avec détection diff améliorée
+*.md    text diff=markdown
+*.mdx   text diff=markdown
+
+# Documentation
+*.txt   text
+*.rst   text
+*.org   text
+
+# ===============================================
+# 🔧 CONFIGURATION OUTILS
+# ===============================================
+# Git
+.gitignore      text
+.gitattributes  text
+.gitmodules     text
+
+# GitHub
+.github/**      text
+
+# EditorConfig
+.editorconfig   text
+
+# Linting
+.eslintrc*      text
+.prettierrc*    text
+.stylelintrc*   text
+
+# ===============================================
+# 🚀 DÉPLOIEMENT ET CI/CD
+# ===============================================
+# Docker
+Dockerfile      text
+.dockerignore   text
+docker-compose*.yml text
+
+# Scripts shell (toujours LF)
+*.sh            text eol=lf
+*.bash          text eol=lf
+
+# PM2 et process management
+ecosystem.config.js text
+*.config.js         text
+
+# ===============================================
+# 📦 GESTION DES PACKAGES
+# ===============================================
+# Node.js
+package.json        text
+package-lock.json   text -diff
+yarn.lock          text -diff
+.nvmrc             text
+
+# ===============================================
+# 🖼️ IMAGES ET MÉDIAS
+# ===============================================
+# Images (binaires, pas de diff)
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.svg   text
+*.webp  binary
+*.bmp   binary
+*.tiff  binary
+
+# Vidéos (binaires)
+*.mp4   binary
+*.webm  binary
+*.avi   binary
+*.mov   binary
+
+# Audio (binaires)
+*.mp3   binary
+*.wav   binary
+*.ogg   binary
+
+# ===============================================
+# 📄 DOCUMENTS ET ARCHIVES
+# ===============================================
+# PDF et documents
+*.pdf   binary
+*.doc   binary
+*.docx  binary
+*.xls   binary
+*.xlsx  binary
+*.ppt   binary
+*.pptx  binary
+
+# Archives
+*.zip   binary
+*.tar   binary
+*.gz    binary
+*.7z    binary
+*.rar   binary
+
+# ===============================================
+# 🔐 SÉCURITÉ ET CERTIFICATES
+# ===============================================
+# Certificats et clés (binaires sensibles)
+*.pem   binary
+*.key   binary
+*.cert  binary
+*.crt   binary
+*.p12   binary
+*.pfx   binary
+
+# ===============================================
+# 🗄️ BASES DE DONNÉES
+# ===============================================
+# Exports de base de données
+*.sql   text
+*.dump  binary
+*.sqlite binary
+*.db    binary
+
+# ===============================================
+# ⚙️ CONFIGURATION SPÉCIALE GITHUB
+# ===============================================
+# Fichiers à toujours traiter comme texte pour PR diff
+.env.template           text
+.env.*.template         text
+SECURITY.md            text
+CONTRIBUTING.md        text
+
+# Scripts de déploiement (critique pour review)
+scripts/**/*.sh        text eol=lf diff
+
+# Configuration Docker (importante pour review)
+docker-compose*.yml    text diff
+
+# ===============================================
+# 🚫 FICHIERS À EXCLURE DU DIFF
+# ===============================================
+# Fichiers générés automatiquement
+package-lock.json  -diff
+yarn.lock         -diff
+
+# Logs (pas pertinents pour diff)
+*.log             -diff
+
+# Coverage reports (trop verbeux)
+coverage/**       -diff
+
+# ===============================================
+# 🔍 DÉTECTION DE FICHIERS SENSIBLES
+# ===============================================
+# Pattern pour détecter secrets potentiels
+*.env             text filter=remove-secrets
+*.env.local       text filter=remove-secrets
+config/secrets.json   text filter=remove-secrets
+
+# ===============================================
+# 🎯 CONFIGURATION LINGUIST GITHUB
+# ===============================================
+# Exclusion des fichiers générés des statistiques
+package-lock.json     linguist-generated=true
+yarn.lock            linguist-generated=true
+coverage/**          linguist-generated=true
+build/**             linguist-generated=true
+dist/**              linguist-generated=true
+
+# Documentation
+*.md                 linguist-documentation=true
+docs/**              linguist-documentation=true
+
+# Configuration
+*.json               linguist-language=JSON
+*.yml                linguist-language=YAML
+*.yaml               linguist-language=YAML
+
+# Vendored dependencies
+node_modules/**      linguist-vendored=true
+
+# ===============================================
+# 🚀 OPTIMISATIONS POUR GITHUB ACTIONS
+# ===============================================
+# Fichiers critiques pour CI/CD (toujours en LF)
+.github/workflows/**     text eol=lf
+
+# Scripts de build et déploiement
+scripts/deployment/**    text eol=lf
+scripts/security/**      text eol=lf
+scripts/monitoring/**    text eol=lf
+
+# ===============================================
+# 📊 MERGE STRATEGIES
+# ===============================================
+# Changelog - toujours merger (pas de conflit)
+CHANGELOG.md        merge=union
+
+# Package-lock - utiliser version locale en cas de conflit
+package-lock.json   merge=ours
+
+# Configuration environnement - manuel
+.env.template       merge=manual
+
+# ===============================================
+# 🔧 FILTERS PERSONNALISÉS (optionnel)
+# ===============================================
+# Filter pour nettoyer les secrets avant commit (à configurer)
+# git config filter.remove-secrets.clean 'sed "s/password=.*/password=REDACTED/g"'
+# git config filter.remove-secrets.smudge cat
+
+# ===============================================
+# 📝 NOTES IMPORTANTES
+# ===============================================
+# Ce .gitattributes :
+# ✅ Normalise les fins de ligne (LF) pour cohérence
+# ✅ Optimise les diffs pour code review GitHub  
+# ✅ Protège contre commit accidentel de binaires
+# ✅ Améliore statistiques linguist GitHub
+# ✅ Configure types MIME appropriés
+# ✅ Exclut fichiers générés des stats
+#
+# Pour appliquer rétroactivement :
+# git add --renormalize .
+# git commit -m "Normalize line endings"

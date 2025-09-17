@@ -1,0 +1,252 @@
+# ===============================================
+# DOCKER IGNORE - PSA GRADING APP
+# ===============================================
+# 🚫 Fichiers à exclure du contexte Docker
+# 📦 Optimisation de la taille et sécurité
+
+# ===============================================
+# FICHIERS SYSTÈME ET CACHE
+# ===============================================
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+**/Thumbs.db
+**/ehthumbs.db
+**/Desktop.ini
+
+# Cache et fichiers temporaires
+**/.cache/
+**/tmp/
+**/temp/
+**/*.tmp
+**/*.temp
+**/.temp/
+**/.tmp/
+
+# ===============================================
+# ENVIRONNEMENTS DE DÉVELOPPEMENT
+# ===============================================
+# IDEs et éditeurs
+**/.vscode/
+**/.idea/
+**/.sublime-*
+**/*.swp
+**/*.swo
+**/*~
+**/.vim/
+**/.netrwhist
+
+# Outils de développement
+**/.editorconfig
+**/.eslintrc*
+**/.prettierrc*
+**/.stylelintrc*
+
+# ===============================================
+# CONTRÔLE DE VERSION
+# ===============================================
+**/.git/
+**/.gitignore
+**/.gitattributes
+**/.gitmodules
+**/.gitkeep
+
+# GitHub
+**/.github/
+**/CONTRIBUTING.md
+**/ISSUE_TEMPLATE/
+**/PULL_REQUEST_TEMPLATE/
+
+# Autres VCS
+**/.svn/
+**/.hg/
+**/.bzr/
+
+# ===============================================
+# DÉPENDANCES ET PACKAGES
+# ===============================================
+# Node.js
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/lerna-debug.log*
+**/.pnpm-debug.log*
+
+# Fichiers de lock (gardés pour la reproductibilité)
+# package-lock.json
+# yarn.lock
+
+# ===============================================
+# ENVIRONNEMENT ET CONFIGURATION
+# ===============================================
+# Variables d'environnement sensibles
+**/.env
+**/.env.local
+**/.env.development
+**/.env.staging
+**/.env.test
+**/.env.production
+**/.env.*.local
+
+# Configuration locale
+**/config/local.json
+**/config/production.json
+**/config/staging.json
+
+# ===============================================
+# BUILDS ET ARTEFACTS
+# ===============================================
+# Build frontend
+**/dist/
+**/build/
+**/.next/
+**/.nuxt/
+**/out/
+
+# Coverage et tests
+**/coverage/
+**/.nyc_output/
+**/test-results/
+**/junit.xml
+
+# ===============================================
+# LOGS ET DONNÉES
+# ===============================================
+# Fichiers de logs
+**/logs/
+**/*.log
+**/log/
+**/.log/
+
+# Données d'application
+**/uploads/
+**/data/
+**/database/
+**/backup/
+**/backups/
+
+# ===============================================
+# DOCKER ET DÉPLOIEMENT
+# ===============================================
+# Docker
+**/Dockerfile*
+**/docker-compose*.yml
+**/.dockerignore
+
+# Déploiement
+**/deploy/
+**/deployment/
+**/k8s/
+**/kubernetes/
+**/terraform/
+**/ansible/
+
+# Scripts de déploiement (gardés)
+# scripts/
+
+# ===============================================
+# DOCUMENTATION
+# ===============================================
+# Documentation (exclue du build)
+**/README.md
+**/CHANGELOG.md
+**/LICENSE
+**/LICENCE
+**/docs/
+**/documentation/
+**/*.md
+
+# ===============================================
+# TESTS ET QUALITÉ
+# ===============================================
+# Tests (exclus du build prod)
+**/test/
+**/tests/
+**/__tests__/
+**/__mocks__/
+**/*.test.js
+**/*.test.ts
+**/*.spec.js  
+**/*.spec.ts
+
+# Outils de qualité
+**/.eslintcache
+**/.stylelintcache
+**/sonar-project.properties
+
+# ===============================================
+# FICHIERS SPÉCIFIQUES AU PROJET
+# ===============================================
+# Secrets et clés (CRITIQUE)
+**/secrets/
+**/certificates/
+**/certs/
+**/*.pem
+**/*.key
+**/*.cert
+**/*.crt
+**/*.p12
+**/*.pfx
+
+# Fichiers de configuration OVH
+**/ecosystem.config.js
+**/GUIDE_*.md
+**/DEPLOYMENT_*.md
+**/SECURITY_*.md
+
+# Artefacts de sécurité
+**/artifacts/
+**/security_*.js
+
+# ===============================================
+# FICHIERS VOLUMINEUX
+# ===============================================
+# Images et médias volumineux
+**/*.iso
+**/*.dmg
+**/*.exe
+**/*.zip
+**/*.tar
+**/*.tar.gz
+**/*.rar
+
+# Vidéos (à moins d'être nécessaires)
+**/*.mp4
+**/*.avi
+**/*.mov
+**/*.webm
+
+# ===============================================
+# OUTILS DE DÉVELOPPEMENT SPÉCIFIQUES
+# ===============================================
+# Replit
+**/.replit
+**/replit.nix
+**/replit.md
+
+# Mise en cache build
+**/.sass-cache/
+**/node_modules/.cache/
+
+# Runtime
+**/runtime/
+**/*.pid
+**/pids/
+**/*.seed
+**/*.pid.lock
+
+# ===============================================
+# OPTIMISATIONS FINALES
+# ===============================================
+# Éviter les doublons de sécurité
+!.env.template
+!.env.*.template
+
+# Garder les scripts d'entrée Docker
+!scripts/docker/
+!docker/
+
+# S'assurer que le package.json est inclus
+!package.json
+!package-lock.json
