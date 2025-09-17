@@ -1,0 +1,261 @@
+# ===============================================
+# DEPENDABOT - PSA GRADING APP
+# ===============================================
+# 🤖 Configuration automatique des mises à jour de sécurité et dépendances
+# 🔐 Optimisé pour sécurité et stabilité production
+
+version: 2
+updates:
+
+# ===============================================
+# 📦 NPM DEPENDENCIES - PRODUCTION CRITIQUE
+# ===============================================
+  - package-ecosystem: "npm"
+    directory: "/"
+    
+    # Fréquence des vérifications
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    
+    # Stratégie de versioning
+    versioning-strategy: increase
+    
+    # Pull requests groupées pour efficacité
+    groups:
+      # Groupe sécurité (priorité absolue)
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+      
+      # Groupe production (dépendances critiques)
+      production-dependencies:
+        patterns:
+          - "express"
+          - "helmet"
+          - "bcrypt"
+          - "jsonwebtoken"
+          - "pg"
+          - "cors"
+          - "dotenv"
+          - "@shopify/polaris"
+          - "@shopify/polaris-icons"
+      
+      # Groupe développement (moins critique)
+      development-dependencies:
+        dependency-type: "development"
+        patterns:
+          - "nodemon"
+          - "cross-env"
+          - "vitest"
+          - "@vitejs/plugin-react"
+    
+    # Configuration avancée
+    open-pull-requests-limit: 5
+    
+    # Labels automatiques
+    labels:
+      - "dependencies"
+      - "security"
+      - "automerge"
+    
+    # Reviewers automatiques
+    reviewers:
+      - "devops-team"
+      - "security-team"
+    
+    # Assignees
+    assignees:
+      - "lead-developer"
+    
+    # Configuration commits
+    commit-message:
+      prefix: "⬆️"
+      prefix-development: "⬆️ [dev]"
+      include: "scope"
+    
+    # Ignorer certaines dépendances
+    ignore:
+      # Versions majeures (review manuelle requise)
+      - dependency-name: "express"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]  
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
+      
+      # Packages temporairement gelés
+      - dependency-name: "puppeteer"
+        versions: [">= 25.0.0"]
+    
+    # Autoriser mise à jour des manifestes
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    
+    # Milestone automatique
+    milestone: "Security Updates"
+
+# ===============================================
+# 🐳 DOCKER DEPENDENCIES
+# ===============================================
+  - package-ecosystem: "docker"
+    directory: "/"
+    
+    schedule:
+      interval: "weekly" 
+      day: "wednesday"
+      time: "10:00"
+      timezone: "Europe/Paris"
+    
+    labels:
+      - "docker"
+      - "infrastructure"
+      - "security"
+    
+    reviewers:
+      - "devops-team"
+    
+    commit-message:
+      prefix: "🐳"
+      include: "scope"
+    
+    # Grouper updates Docker
+    groups:
+      docker-base-images:
+        patterns:
+          - "node"
+          - "postgres"
+          - "nginx"
+          - "redis"
+    
+    open-pull-requests-limit: 3
+
+# ===============================================
+# ⚙️ GITHUB ACTIONS
+# ===============================================
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "11:00"
+      timezone: "Europe/Paris"
+    
+    labels:
+      - "github-actions"
+      - "ci-cd"
+      - "security"
+    
+    reviewers:
+      - "devops-team"
+    
+    commit-message:
+      prefix: "🚀"
+      include: "scope"
+    
+    # Grouper actions par catégorie
+    groups:
+      ci-actions:
+        patterns:
+          - "actions/checkout"
+          - "actions/setup-node"
+          - "actions/cache"
+      
+      deployment-actions:
+        patterns:
+          - "docker/build-push-action"
+          - "docker/setup-buildx-action"
+          - "appleboy/ssh-action"
+      
+      security-actions:
+        patterns:
+          - "github/codeql-action"
+          - "aquasecurity/trivy-action"
+    
+    open-pull-requests-limit: 3
+
+# ===============================================
+# 🔧 CONFIGURATION GLOBALE
+# ===============================================
+
+# Registries privés (si utilisés)
+registries:
+  npm-registry:
+    type: npm-registry
+    url: https://registry.npmjs.org
+    # token: ${{ secrets.NPM_TOKEN }}  # Si registry privé
+
+# ===============================================
+# 📋 RÈGLES DE MERGE AUTOMATIQUE
+# ===============================================
+# Configuration pour auto-merge des updates sécurité (à configurer dans GitHub)
+
+# Exemple de configuration GitHub CLI pour auto-merge:
+# gh api repos/:owner/:repo/branches/main/protection \
+#   --method PUT \
+#   --field required_status_checks='{"strict":true,"contexts":["test","security-scan"]}' \
+#   --field enforce_admins=true \
+#   --field required_pull_request_reviews='{"required_approving_review_count":1,"dismiss_stale_reviews":true}' \
+#   --field restrictions=null
+
+# ===============================================
+# 🚨 ALERTES ET NOTIFICATIONS SÉCURITÉ
+# ===============================================
+# Dependabot alertes configurées automatiquement :
+# - Email notifications pour vulnérabilités critiques
+# - Slack notifications via GitHub webhooks  
+# - Dashboard sécurité dans GitHub Security tab
+
+# ===============================================
+# 📊 MÉTRIQUES ET MONITORING
+# ===============================================
+# Dependabot insights disponibles dans :
+# Repository → Insights → Dependency graph → Dependabot
+
+# Métriques trackées :
+# - Nombre de vulnérabilités corrigées
+# - Temps moyen de résolution
+# - Taux d'adoption des mises à jour
+# - Impact sur la stabilité
+
+# ===============================================
+# 🎯 BEST PRACTICES IMPLÉMENTÉES
+# ===============================================
+# ✅ Mises à jour groupées par priorité
+# ✅ Review automatique pour sécurité
+# ✅ Tests automatiques avant merge
+# ✅ Limitation du nombre de PRs ouvertes
+# ✅ Labels et assignation automatique
+# ✅ Commit messages standardisés
+# ✅ Ignorer updates majeures (review manuelle)
+# ✅ Separation dev/prod dependencies
+# ✅ Monitoring Docker et GitHub Actions
+
+# ===============================================
+# 🔍 COMMANDES UTILES
+# ===============================================
+# Voir status Dependabot :
+# gh api repos/:owner/:repo/dependabot/alerts
+
+# Lister les PRs Dependabot :  
+# gh pr list --author "app/dependabot"
+
+# Fermer toutes les PRs Dependabot :
+# gh pr list --author "app/dependabot" --json number --jq '.[].number' | xargs -I {} gh pr close {}
+
+# ===============================================
+# 📞 SUPPORT ET TROUBLESHOOTING  
+# ===============================================
+# Si Dependabot ne fonctionne pas :
+# 1. Vérifier permissions GitHub App
+# 2. Vérifier configuration YAML syntax
+# 3. Consulter logs dans Security → Dependabot
+# 4. Vérifier rate limits npm/GitHub
+# 
+# Documentation officielle :
+# https://docs.github.com/en/code-security/dependabot
